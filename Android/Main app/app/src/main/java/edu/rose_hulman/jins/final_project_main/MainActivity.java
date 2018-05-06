@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import edu.rose_hulman.jins.fsm_main.FSM_System;
+import edu.rose_hulman.jins.script_runing.Scripts;
 import edu.rose_hulman.me435Library.RobotActivity;
 
 public class MainActivity extends FSM_System {

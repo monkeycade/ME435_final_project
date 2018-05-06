@@ -44,4 +44,13 @@ public class Scripts {
 
     }
 
+    public boolean runScript(String script_Name){
+        if (mscripts.containsKey(script_Name)){
+            mscripts.get(script_Name).run();
+            return true;
+        }else{
+            return false;
+        }
+    }
+
 }

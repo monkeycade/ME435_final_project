@@ -196,15 +196,15 @@ public class FSM_System extends MainCommandBin {
       case NEAR_BALL_SCRIPT:
         mGpsInfoTextView.setText("---");
         mGuessXYTextView.setText("---");
-//        mScripts.nearBallScript();
-          //TODO fix it
+        //TODO Add that Script;
+        mScripts.runScript("near_ball_script");
         break;
       case DRIVE_TOWARDS_FAR_BALL:
         // Nothing here. All the work happens in the loop function.
         break;
       case FAR_BALL_SCRIPT:
-//        mScripts.farBallScript();
-          //TODO fix it
+        mScripts.runScript("far_ball_script");
+          //TODO Add that Scirpt
         break;
       case DRIVE_TOWARDS_HOME:
         // Nothing here. All the work happens in the loop function.
@@ -480,9 +480,9 @@ public class FSM_System extends MainCommandBin {
       public void onClick(View v) {
         mLeftStraightPwmValue = leftDutyCyclePicker.getValue();
         mRightStraightPwmValue = rightDutyCyclePicker.getValue();
-//        mScripts.testStraightScript();
+        mScripts.runScript("testStright Script");
 
-          //TODO fix it
+          //TODO add that Script
       }
     });
     alert = builder.create();

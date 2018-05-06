@@ -2,12 +2,15 @@ package edu.rose_hulman.jins.final_project_main;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import edu.rose_hulman.jins.script_runing.Script;
 import edu.rose_hulman.jins.script_runing.ScriptRunHandler;
+import edu.rose_hulman.jins.script_runing.Scripts;
 import edu.rose_hulman.me435Library.RobotActivity;
 
 public class MainCommandBin extends RobotActivity {
@@ -37,6 +40,7 @@ public class MainCommandBin extends RobotActivity {
     }
 
     public void system_print(String text) {
+        Log.d("logout", text);
         String[] temps = mOutput.getText().toString().split("\n");
         if(temps.length == 1 && temps[0].equals("")){
             mOutput.setText(text);
@@ -72,6 +76,7 @@ public class MainCommandBin extends RobotActivity {
         //noinspection SimplifiableIfStatement
         switch (item.getItemId()) {
             case R.id.toDebug:
+                new Scripts(this).runScript("randomscript");
                 system_print("TODO: add a Debug frame");
                 return true;
             case R.id.toFSM:
@@ -83,6 +88,17 @@ public class MainCommandBin extends RobotActivity {
                 return super.onOptionsItemSelected(item);
 
         }
+    }
+
+    @Override
+    public void sendCommand(String commandString) {
+        super.sendCommand(commandString);
+        Log.d("Script", commandString);
+        system_print(commandString);
+    }
+
+    public void postDelayScript(Script script, int time) {
+        mCommandHandler.postDelayed(new ScriptRunHandler(script,this), time);
     }
 }
 

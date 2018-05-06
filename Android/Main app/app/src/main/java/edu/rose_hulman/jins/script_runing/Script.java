@@ -11,8 +11,9 @@ public class Script {
     private MainCommandBin msystem;
     private String[] mCommands;
     private int[] mDelays;
-    private int state;
-    boolean isBuildSuccess;
+    private int current_step;
+    protected boolean isBuildSuccess;
+    int command_length;
 
     public Script(InputStream inStream, MainCommandBin inActivity, PositionDirectory inDirectory) {
         mDirectory = inDirectory;
@@ -23,11 +24,12 @@ public class Script {
         mDelays = new int[temp.size()];
 
         isBuildSuccess =  true;
+        command_length = 0;
         for (int c = 0; c < temp.size(); c++) {
             String command = temp.get(c)[0];
             StringBuilder tem = new StringBuilder();
             if (isValidCommand(command,tem)) {
-                mCommands[c] = command;
+                mCommands[command_length] = command;
                 String valueString = temp.get(c)[1];
                 int basic = 10000;
                 try {
@@ -37,7 +39,8 @@ public class Script {
                 } catch (NullPointerException e) {
                     msystem.system_print("ERROR: There is no time value at line " + (c + 1));
                 }
-                mDelays[c] = basic;
+                mDelays[command_length] = basic;
+                command_length++;
             }else{
                 isBuildSuccess = false;
                 msystem.system_print(tem.toString() + "at line " + (c + 1));
@@ -79,4 +82,28 @@ public class Script {
         return output;
     }
 
+    public void run(){
+        this.reset();
+        msystem.postDelayScript(this,30);
+    }
+
+    public void reset() {
+        current_step = 0;
+    }
+
+    public String handleNext() {
+        current_step++;
+        String[] temp = seperateCommand(mCommands[current_step - 1]);
+        String toSDKCommand;
+
+        if(temp[0].equalsIgnoreCase("position")){
+            toSDKCommand = mDirectory.translate(temp[1]);
+        }else{
+            toSDKCommand = null;
+        }
+        if (current_step < command_length) {
+            msystem.postDelayScript(this, mDelays[current_step]);
+        }
+        return toSDKCommand;
+    }
 }
