@@ -9,11 +9,15 @@
     tools:context=".MainActivity"
     tools:showIn="@layout/main_display_frame">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Welcome to the final project"
-        android:textSize="50sp"
-        android:gravity="center"/>
+    <ViewFlipper
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/view_controller">
+
+        <include layout="@layout/start_screen"/>
+
+        <include layout="@layout/fsm_main"/>
+
+    </ViewFlipper>
 
 </RelativeLayout>

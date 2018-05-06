@@ -36,6 +36,7 @@
         android:layout_margin="@dimen/fab_margin"
         android:layout_above="@id/main_output"
         app:srcCompat="@android:drawable/ic_delete" />
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
