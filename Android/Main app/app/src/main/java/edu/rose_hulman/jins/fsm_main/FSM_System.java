@@ -178,7 +178,6 @@ public class FSM_System extends MainCommandBin {
     setLocationToColor(2, BallColor.WHITE);
     setLocationToColor(3, BallColor.BLUE);
     setState(State.READY_FOR_MISSION);
-
   }
 
   public void setState(State newState) {
@@ -197,13 +196,15 @@ public class FSM_System extends MainCommandBin {
       case NEAR_BALL_SCRIPT:
         mGpsInfoTextView.setText("---");
         mGuessXYTextView.setText("---");
-        mScripts.nearBallScript();
+//        mScripts.nearBallScript();
+          //TODO fix it
         break;
       case DRIVE_TOWARDS_FAR_BALL:
         // Nothing here. All the work happens in the loop function.
         break;
       case FAR_BALL_SCRIPT:
-        mScripts.farBallScript();
+//        mScripts.farBallScript();
+          //TODO fix it
         break;
       case DRIVE_TOWARDS_HOME:
         // Nothing here. All the work happens in the loop function.
@@ -479,7 +480,9 @@ public class FSM_System extends MainCommandBin {
       public void onClick(View v) {
         mLeftStraightPwmValue = leftDutyCyclePicker.getValue();
         mRightStraightPwmValue = rightDutyCyclePicker.getValue();
-        mScripts.testStraightScript();
+//        mScripts.testStraightScript();
+
+          //TODO fix it
       }
     });
     alert = builder.create();

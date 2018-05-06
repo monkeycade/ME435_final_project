@@ -29,7 +29,6 @@ public class MainActivity extends FSM_System {
         setSupportActionBar(toolbar);
 
         //Setup the reset button
-        system_print("App start to initialize");
         FloatingActionButton e_stop = findViewById(R.id.e_stop);
         e_stop.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,6 +47,7 @@ public class MainActivity extends FSM_System {
             };
             ActivityCompat.requestPermissions(this, CAMERA_PERMISSONS, 0);
         }
+        system_print("App finish initialize");
     }
 
 

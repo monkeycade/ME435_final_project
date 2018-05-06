@@ -1,21 +1,24 @@
 package edu.rose_hulman.jins.final_project_main;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import edu.rose_hulman.jins.script_runing.ScriptRunHandler;
 import edu.rose_hulman.me435Library.RobotActivity;
 
 public class MainCommandBin extends RobotActivity {
 
-    final static int NUMBER_OF_DEBUGGER_LINE = 3;
+    final static int NUMBER_OF_DEBUGGER_LINE = 20;
 
 
     TextView mOutput;
 
     ViewFlipper mViewControl;
+    Handler mHandler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +31,9 @@ public class MainCommandBin extends RobotActivity {
 
         //Set up the View Flipper
         mViewControl = findViewById(R.id.view_controller);
+
+        //Set up handler for delay process;
+        mHandler = new Handler();
     }
 
     public void system_print(String text) {
@@ -44,6 +50,10 @@ public class MainCommandBin extends RobotActivity {
         }
         output.append(text);
         mOutput.setText(output.toString());
+    }
+
+    public void sendPostDelayCommand(String Command, long time){
+        mCommandHandler.postDelayed(new ScriptRunHandler(Command,this), time);
     }
 
     @Override
@@ -75,3 +85,4 @@ public class MainCommandBin extends RobotActivity {
         }
     }
 }
+

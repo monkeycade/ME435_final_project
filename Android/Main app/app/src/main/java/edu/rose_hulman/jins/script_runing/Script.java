@@ -1,0 +1,82 @@
+package edu.rose_hulman.jins.script_runing;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+
+import edu.rose_hulman.jins.final_project_main.MainCommandBin;
+
+public class Script {
+
+    private PositionDirectory mDirectory;
+    private MainCommandBin msystem;
+    private String[] mCommands;
+    private int[] mDelays;
+    private int state;
+    boolean isBuildSuccess;
+
+    public Script(InputStream inStream, MainCommandBin inActivity, PositionDirectory inDirectory) {
+        mDirectory = inDirectory;
+        msystem = inActivity;
+        CSVReading reader = new CSVReading(inStream);
+        ArrayList<String[]> temp = reader.read();
+        mCommands = new String[temp.size()];
+        mDelays = new int[temp.size()];
+
+        isBuildSuccess =  true;
+        for (int c = 0; c < temp.size(); c++) {
+            String command = temp.get(c)[0];
+            StringBuilder tem = new StringBuilder();
+            if (isValidCommand(command,tem)) {
+                mCommands[c] = command;
+                String valueString = temp.get(c)[1];
+                int basic = 10000;
+                try {
+                    basic = Integer.parseInt(valueString);
+                } catch (NumberFormatException e) {
+                    msystem.system_print("ERROR: Failure to read time value at line " + (c + 1) + "\n The string we get is " + valueString);
+                } catch (NullPointerException e) {
+                    msystem.system_print("ERROR: There is no time value at line " + (c + 1));
+                }
+                mDelays[c] = basic;
+            }else{
+                isBuildSuccess = false;
+                msystem.system_print(tem.toString() + "at line " + (c + 1));
+            }
+        }
+    }
+
+    private boolean isValidCommand(String mCommand,StringBuilder tem) {
+        String[] commands = seperateCommand(mCommand);
+        String identify = commands[0];
+        String detail = commands[1];
+        if (identify == null){
+            tem.append("ERROR: The command is not exist ");
+            return false;
+        }
+        if (identify.equalsIgnoreCase("position")){
+            tem.append("ERROR: it is not a possible position command ");
+            return mDirectory.isCommand(detail);
+        }else {
+
+            tem.append("ERROR: it is not a reasonable command ");
+            return false;
+        }
+
+    }
+
+    private String[] seperateCommand(String commandLine) {
+        String[] output = new String[2];
+        String[] input = commandLine.split(" ");
+        if (input.length > 1) {
+            output[0] = input[0];
+            StringBuilder temp = new StringBuilder();
+            for (int i = 1; i < input.length; i++){
+                temp.append(input[i]);
+                temp.append(" ");
+            }
+            output[1] = temp.substring(0,temp.length() - 1).toString();
+        }
+        return output;
+    }
+
+}
