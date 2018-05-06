@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="edu.rose_hulman.jins.me435_final_project.MainActivity">
+    <item
+        android:id="@+id/toDebug"
+        android:orderInCategory="100"
+        android:title="Debug"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/toFSM"
+        android:orderInCategory="100"
+        android:title="FSM"
+        app:showAsAction="never" />
+</menu>
