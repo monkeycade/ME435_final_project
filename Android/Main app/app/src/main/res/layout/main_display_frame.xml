@@ -43,7 +43,7 @@
         android:id="@+id/main_output"
         android:background="#000000"
         android:textColor="#ffffff"
-        android:text="App not initialed yet"
+        android:text=""
         />
 
 </RelativeLayout>
