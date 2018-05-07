@@ -286,7 +286,7 @@ public class TempSubFSMTemp extends AccessoryActivity implements FieldGpsListene
         mXTarget = xTarget;
         mYTarget = yTarget;
 
-        if(((mXTarget-mCurrentGpsX)*(mXTarget-mCurrentGpsX)+(mYTarget-mCurrentGpsY)*(mYTarget-mCurrentGpsY))<20){
+        if(((mXTarget-mCurrentGpsX)*(mXTarget-mCurrentGpsX)+(mYTarget-mCurrentGpsY)*(mYTarget-mCurrentGpsY))<40){
             if(mSubState == SubState.GPS_SEEKING) {
                 setSubState(SubState.BALL_REMOVAL_SCRIPT);
                 mWithinTollerance = true;
@@ -294,9 +294,9 @@ public class TempSubFSMTemp extends AccessoryActivity implements FieldGpsListene
             return;
         }
 
-        double p_gain = 1;
-        double d_gain = .1;
-        double i_gain = .05;
+        double p_gain = 10;
+        double d_gain = 0;
+        double i_gain = 0;
 
 
         if(NavUtils.targetIsOnLeft(mCurrentGpsX,mCurrentGpsY,mCurrentGpsHeading,xTarget,yTarget)){//if (mLeftTurnAmount < mRightTurnAmount) {
