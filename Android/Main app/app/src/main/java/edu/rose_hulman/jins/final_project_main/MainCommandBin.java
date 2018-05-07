@@ -5,26 +5,29 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import edu.rose_hulman.jins.script_runing.Script;
 import edu.rose_hulman.jins.script_runing.ScriptRunHandler;
-import edu.rose_hulman.jins.script_runing.Scripts;
 import edu.rose_hulman.me435Library.RobotActivity;
 
 public class MainCommandBin extends RobotActivity {
 
-    final static int NUMBER_OF_DEBUGGER_LINE = 20;
+    final static int NUMBER_OF_DEBUGGER_LINE = 30;
 
 
-    TextView mOutput;
+    private TextView mOutput;
 
-    ViewFlipper mViewControl;
-    Handler mHandler;
+    private ViewFlipper mViewControl;
+    private ScrollView mScrollView;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
         //Set up the main Screen
         setContentView(R.layout.main_display_frame);
@@ -35,8 +38,8 @@ public class MainCommandBin extends RobotActivity {
         //Set up the View Flipper
         mViewControl = findViewById(R.id.view_controller);
 
-        //Set up handler for delay process;
-        mHandler = new Handler();
+        //Set up the Scroll for debug view
+        mScrollView = findViewById(R.id.debug_output_scrollable);
     }
 
     public void system_print(String text) {
@@ -76,7 +79,6 @@ public class MainCommandBin extends RobotActivity {
         //noinspection SimplifiableIfStatement
         switch (item.getItemId()) {
             case R.id.toDebug:
-                new Scripts(this).runScript("randomscript");
                 system_print("TODO: add a Debug frame");
                 return true;
             case R.id.toFSM:
@@ -92,9 +94,11 @@ public class MainCommandBin extends RobotActivity {
 
     @Override
     public void sendCommand(String commandString) {
-        super.sendCommand(commandString);
-        Log.d("Script", commandString);
-        system_print(commandString);
+        if(commandString!=null) {
+            super.sendCommand(commandString);
+            system_print(commandString);
+            mScrollView.fullScroll(mScrollView.FOCUS_DOWN);
+        }
     }
 
     public void postDelayScript(Script script, int time) {
