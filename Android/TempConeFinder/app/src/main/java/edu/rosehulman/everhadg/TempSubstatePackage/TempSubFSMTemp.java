@@ -294,7 +294,7 @@ public class TempSubFSMTemp extends AccessoryActivity implements FieldGpsListene
             return;
         }
 
-        double p_gain = 10;
+        double p_gain = 5;
         double d_gain = 0;
         double i_gain = 0;
 
