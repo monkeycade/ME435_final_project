@@ -4,20 +4,23 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 import edu.rose_hulman.jins.final_project_main.MainCommandBin;
+import edu.rose_hulman.jins.final_project_main.R;
 
 public class Script {
 
     private PositionDirectory mDirectory;
     private MainCommandBin msystem;
+    private Scripts mSet;
     private String[] mCommands;
     private int[] mDelays;
     private int current_step;
     protected boolean isBuildSuccess;
     int command_length;
 
-    public Script(InputStream inStream, MainCommandBin inActivity, PositionDirectory inDirectory) {
+    public Script(InputStream inStream, MainCommandBin inActivity, PositionDirectory inDirectory,Scripts inScripts) {
         mDirectory = inDirectory;
         msystem = inActivity;
+        mSet = inScripts;
         CSVReading reader = new CSVReading(inStream);
         ArrayList<String[]> temp = reader.read();
         mCommands = new String[temp.size()];
@@ -59,10 +62,22 @@ public class Script {
         if (identify.equalsIgnoreCase("position")){
             tem.append("ERROR: it is not a possible position command ");
             return mDirectory.isCommand(detail);
-        }else {
-
+        }else if(identify.equalsIgnoreCase("script")) {
+            tem.append("ERROR: Not have the script " + detail);
+            return mSet.hasScript(detail);
+        }else if(identify.equalsIgnoreCase("gripper")){
+            tem.append("ERROR: The Gripper value is unreasonable");
+            int t;
+            try {
+               t =  Integer.parseInt(detail);
+            }catch (Exception e){
+                return false;
+            }
+            return t > 20 && t < 60;
+        }else{
             tem.append("ERROR: it is not a reasonable command ");
             return false;
+
         }
 
     }
@@ -84,7 +99,7 @@ public class Script {
 
     public void run(){
         this.reset();
-        msystem.postDelayScript(this,30);
+        msystem.postDelayScript(this,mDelays[current_step]);
     }
 
     public void reset() {
@@ -98,8 +113,16 @@ public class Script {
 
         if(temp[0].equalsIgnoreCase("position")){
             toSDKCommand = mDirectory.translate(temp[1]);
+        }else if (temp[0].equalsIgnoreCase("script")){
+            mSet.runScript(temp[1]);
+            return null;
+        }else if (temp[0].equalsIgnoreCase("gripper")){
+
+            toSDKCommand = msystem.getResources().getString(R.string.gripper_command,Integer.parseInt(temp[1]));
+
         }else{
             toSDKCommand = null;
+
         }
         if (current_step < command_length) {
             msystem.postDelayScript(this, mDelays[current_step]);

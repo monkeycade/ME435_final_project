@@ -493,14 +493,18 @@ public class FSM_System extends MainCommandBin {
    * Test GPS point when going to the Far ball (assumes Blue Team heading to red ball).
    */
   public void handleFakeGpsF0(View view) {
+      mScripts.runScript("left_ball_script");
     onLocationChanged(165, 50, NO_HEADING, null); // Midfield
   }
 
   public void handleFakeGpsF1(View view) {
+      mScripts.runScript("middle_ball_script");
     onLocationChanged(209, 50, 0, null); // Out of range so ignored
   }
 
   public void handleFakeGpsF2(View view) {
+      mScripts.runScript("right" +
+              "_ball_script");
     onLocationChanged(231, 50, 135, null); // Within range!
   }
 

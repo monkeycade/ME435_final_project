@@ -10,11 +10,10 @@ public class Scripts {
     MainCommandBin msystem;
 
     HashMap<String,Script> mscripts;
-
+    boolean isinit;
     public Scripts(MainCommandBin s){
         msystem = s;
-        msystem.sendPostDelayCommand("ATTACH 111111", 500);
-
+        isinit = false;
 
         mscripts = new HashMap<>();
 
@@ -32,11 +31,11 @@ public class Scripts {
                 if (mscripts.containsKey(scriptName)) {
                     msystem.system_print("ERROR: The " + scriptName + " is duplicate in the scripts_name");
                 } else {
-                    Script temp = new Script(msystem.getResources().openRawResource(id),msystem,tempD);
+                    Script temp = new Script(msystem.getResources().openRawResource(id),msystem,tempD,this);
                     if (!temp.isBuildSuccess){
                         msystem.system_print("The script " + scriptName + " is not build successful");
                     }
-                    mscripts.put(scriptName, temp);
+                    mscripts.put(scriptName.toLowerCase(), temp);
                 }
             }
         }
@@ -45,12 +44,20 @@ public class Scripts {
     }
 
     public boolean runScript(String script_Name){
-        if (mscripts.containsKey(script_Name)){
-            mscripts.get(script_Name).run();
+        if(!isinit){
+            msystem.sendCommand("ATTACH 111111");
+            msystem.sendPostDelayCommand("ATTACH 111111",1100);
+            isinit = true;
+        }
+        if (mscripts.containsKey(script_Name.toLowerCase())){
+            mscripts.get(script_Name.toLowerCase()).run();
             return true;
         }else{
             return false;
         }
     }
 
+    public boolean hasScript(String script_Name) {
+        return mscripts.containsKey(script_Name.toLowerCase());
+    }
 }
