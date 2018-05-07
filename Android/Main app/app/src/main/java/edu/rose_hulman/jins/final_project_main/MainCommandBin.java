@@ -79,7 +79,8 @@ public class MainCommandBin extends RobotActivity {
         //noinspection SimplifiableIfStatement
         switch (item.getItemId()) {
             case R.id.toDebug:
-                system_print("TODO: add a Debug frame");
+                mViewControl.setDisplayedChild(2);
+                system_print("Flip to LAb 7");
                 return true;
             case R.id.toFSM:
                 mViewControl.setDisplayedChild(1);

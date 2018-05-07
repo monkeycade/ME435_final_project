@@ -18,6 +18,8 @@
 
         <include layout="@layout/fsm_main"/>
 
+        <include layout="@layout/lab7_layout"/>
+
     </ViewFlipper>
 
 </RelativeLayout>

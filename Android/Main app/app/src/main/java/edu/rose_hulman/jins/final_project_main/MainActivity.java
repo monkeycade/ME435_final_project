@@ -14,11 +14,12 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import edu.rose_hulman.everhadg.TempSubFSMTemp;
 import edu.rose_hulman.jins.fsm_main.FSM_System;
 import edu.rose_hulman.jins.script_runing.Scripts;
 import edu.rose_hulman.me435Library.RobotActivity;
 
-public class MainActivity extends FSM_System {
+public class MainActivity extends TempSubFSMTemp {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -1,8 +1,8 @@
-package edu.rosehulman.everhadg.TempSubstatePackage;
+package edu.rose_hulman.everhadg;
 
 import android.location.Location;
-import android.os.Handler;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.WindowManager;
@@ -11,14 +11,15 @@ import android.widget.TextView;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import edu.rosehulman.me435.AccessoryActivity;
-import edu.rosehulman.me435.FieldGps;
-import edu.rosehulman.me435.FieldGpsListener;
-import edu.rosehulman.me435.FieldOrientation;
-import edu.rosehulman.me435.FieldOrientationListener;
-import edu.rosehulman.me435.NavUtils;
+import edu.rose_hulman.jins.final_project_main.R;
+import edu.rose_hulman.jins.fsm_main.FSM_System;
+import edu.rose_hulman.me435Library.FieldGps;
+import edu.rose_hulman.me435Library.FieldGpsListener;
+import edu.rose_hulman.me435Library.FieldOrientation;
+import edu.rose_hulman.me435Library.FieldOrientationListener;
+import edu.rose_hulman.me435Library.NavUtils;
 
-public class TempSubFSMTemp extends AccessoryActivity implements FieldGpsListener, FieldOrientationListener {
+public class TempSubFSMTemp extends FSM_System implements FieldGpsListener, FieldOrientationListener {
 
     /*public enum State {
         READY_FOR_MISSION,INITIAL_STRAIGHT,NEAR_BALL_MISSION,FAR_BALL_MISSION,HOME_CONE_MISSION,WAITING_FOR_PICKUP,SEEKING_HOME;
@@ -54,7 +55,6 @@ public class TempSubFSMTemp extends AccessoryActivity implements FieldGpsListene
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
         mRedBallTextView =  findViewById(R.id.redBallLabel);
         mBlueBallTextView = findViewById(R.id.blueBallLabel);
@@ -164,7 +164,7 @@ public class TempSubFSMTemp extends AccessoryActivity implements FieldGpsListene
         }
     }
 
-    private void loop(){
+    public void loop(){
         updateTimeDisplay();
         switch (mSubState){
             //case READY_FOR_MISSION:
@@ -177,7 +177,7 @@ public class TempSubFSMTemp extends AccessoryActivity implements FieldGpsListene
                 break;
             case GPS_SEEKING:
 
-                        seekTargetAt(50,-50);
+                        seekTargetAt(90,-50);
                         if (NavUtils.targetIsOnLeft(mCurrentGpsX,mCurrentGpsY,mCurrentGpsHeading,mXTarget,mYTarget)) {
                             mTurnAmountTextView.setText("Left " + getString(R.string.degrees_format, mLeftTurnAmount));
                         } else {
@@ -193,7 +193,6 @@ public class TempSubFSMTemp extends AccessoryActivity implements FieldGpsListene
                         }
                 break;
             case BALL_REMOVAL_SCRIPT:
-                    superSpecialBallRemoval();
                 mRedBallTextView.setText("---");
             default:
                 break;
@@ -287,13 +286,13 @@ public class TempSubFSMTemp extends AccessoryActivity implements FieldGpsListene
 
         if(((mXTarget-mCurrentGpsX)*(mXTarget-mCurrentGpsX)+(mYTarget-mCurrentGpsY)*(mYTarget-mCurrentGpsY))<40){
             if(mSubState == SubState.GPS_SEEKING) {
-                setSubState(SubState.BALL_REMOVAL_SCRIPT);
+                //setSubState(SubState.BALL_REMOVAL_SCRIPT);
                 mWithinTollerance = true;
             }
             return;
         }
 
-        double p_gain = 3;
+        double p_gain = 4;
         double d_gain = 1.5;
         double i_gain = .05;
 
@@ -374,6 +373,7 @@ public class TempSubFSMTemp extends AccessoryActivity implements FieldGpsListene
          * Cade's Ultimate Secret move that teleports golf balls
          */
         sendCommand("WHEEL SPEED BRAKE 0 BRAKE 0");
+        handleFakeGpsF0(null);
     }
 
     // TODO Need buttons to set the origin of the robot's location
