@@ -147,7 +147,6 @@ public class TempSubFSMTemp extends AccessoryActivity implements FieldGpsListene
             mRedBallTextView.setText("Red\nBall");
             mBlueBallTextView.setText("Blue\nBall");
             mWhiteBallTextView.setText("White\nBall");
-            mGPSTextView.setText("---");
             mTargetHeadingTextView.setText("---");
             mTargetXYTextView.setText("---");
             mCommandTextView.setText("---");
@@ -295,7 +294,7 @@ public class TempSubFSMTemp extends AccessoryActivity implements FieldGpsListene
         }
 
         double p_gain = 5;
-        double d_gain = 2;
+        double d_gain = 1.5;
         double i_gain = .05;
 
 
