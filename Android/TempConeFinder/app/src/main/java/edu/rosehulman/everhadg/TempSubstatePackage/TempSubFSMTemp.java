@@ -42,7 +42,7 @@ public class TempSubFSMTemp extends AccessoryActivity implements FieldGpsListene
     private double mCurrentSensorHeading, mCurrentHeading;
     private int mLeftDutyCycle,mRightDutyCycle;
     private static final int LOOP_INTERVAL_MS = 100;
-    public static final int LOWEST_DESIRABLE_DUTY_CYCLE = 150;
+    public static final int LOWEST_DESIRABLE_DUTY_CYCLE = 50;
     public static final int LEFT_PWM_VALUE_FOR_STRAIGHT = 255;
     public static final int RIGHT_PWM_VALUE_FOR_STRAIGHT = 255;
     private boolean mWithinTollerance = false;
@@ -294,8 +294,8 @@ public class TempSubFSMTemp extends AccessoryActivity implements FieldGpsListene
             return;
         }
 
-        double p_gain = 1;
-        double d_gain = .1;
+        double p_gain = 5;
+        double d_gain = 2;
         double i_gain = .05;
 
 
