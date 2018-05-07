@@ -286,7 +286,7 @@ public class TempSubFSMTemp extends AccessoryActivity implements FieldGpsListene
         mXTarget = xTarget;
         mYTarget = yTarget;
 
-        if(((mXTarget-mCurrentGpsX)*(mXTarget-mCurrentGpsX)+(mYTarget-mCurrentGpsY)*(mYTarget-mCurrentGpsY))<20){
+        if(((mXTarget-mCurrentGpsX)*(mXTarget-mCurrentGpsX)+(mYTarget-mCurrentGpsY)*(mYTarget-mCurrentGpsY))<40){
             if(mSubState == SubState.GPS_SEEKING) {
                 setSubState(SubState.BALL_REMOVAL_SCRIPT);
                 mWithinTollerance = true;
