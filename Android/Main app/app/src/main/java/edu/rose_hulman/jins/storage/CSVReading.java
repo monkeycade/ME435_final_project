@@ -1,4 +1,4 @@
-package edu.rose_hulman.jins.script_runing;
+package edu.rose_hulman.jins.storage;
 
 import java.io.BufferedReader;
 import java.io.IOException;
