@@ -1,7 +1,6 @@
 package edu.rose_hulman.jins.final_project_main;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -9,8 +8,11 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import java.util.HashMap;
+
 import edu.rose_hulman.jins.script_runing.Script;
 import edu.rose_hulman.jins.script_runing.ScriptRunHandler;
+import edu.rose_hulman.jins.storage.InstanceStorage;
 import edu.rose_hulman.me435Library.RobotActivity;
 
 public class MainCommandBin extends RobotActivity {
@@ -28,7 +30,6 @@ public class MainCommandBin extends RobotActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         //Set up the main Screen
         setContentView(R.layout.main_display_frame);
 
@@ -40,6 +41,16 @@ public class MainCommandBin extends RobotActivity {
 
         //Set up the Scroll for debug view
         mScrollView = findViewById(R.id.debug_output_scrollable);
+
+        InstanceStorage main = new InstanceStorage(this,"main");
+        HashMap<String,Integer> ss  = main.readIntergerMap("cade");
+        if(ss != null){
+            system_print(ss.get("Current") + "");
+        }
+        HashMap<String,Integer> map = new HashMap<>();
+        map.put("Current",(int) (System.currentTimeMillis() % 1000.0));
+        main.store("cade",map);
+
     }
 
     public void system_print(String text) {
