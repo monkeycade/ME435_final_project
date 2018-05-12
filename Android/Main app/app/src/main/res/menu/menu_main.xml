@@ -12,4 +12,9 @@
         android:orderInCategory="100"
         android:title="FSM"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/toBallColorTrainner"
+        android:orderInCategory="100"
+        android:title="Ball Color Trainer"
+        app:showAsAction="never" />
 </menu>

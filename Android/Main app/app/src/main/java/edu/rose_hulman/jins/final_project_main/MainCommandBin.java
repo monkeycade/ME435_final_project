@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
@@ -18,10 +20,11 @@ import edu.rose_hulman.me435Library.RobotActivity;
 public class MainCommandBin extends RobotActivity {
 
     final static int NUMBER_OF_DEBUGGER_LINE = 30;
+    final static int HEIGHT_WHEN_AT_MAIN_SCREEN = 750;
 
 
     private TextView mOutput;
-
+    private InstanceStorage mStorage;
     private ViewFlipper mViewControl;
     private ScrollView mScrollView;
 
@@ -42,14 +45,11 @@ public class MainCommandBin extends RobotActivity {
         //Set up the Scroll for debug view
         mScrollView = findViewById(R.id.debug_output_scrollable);
 
-        InstanceStorage main = new InstanceStorage(this,"main");
-        HashMap<String,Integer> ss  = main.readIntergerMap("cade");
-        if(ss != null){
-            system_print(ss.get("Current") + "");
-        }
-        HashMap<String,Integer> map = new HashMap<>();
-        map.put("Current",(int) (System.currentTimeMillis() % 1000.0));
-        main.store("cade",map);
+        mStorage = new InstanceStorage(this,"main");
+
+        ViewGroup.LayoutParams para = mScrollView.getLayoutParams();
+        para.height = HEIGHT_WHEN_AT_MAIN_SCREEN;
+        mScrollView.setLayoutParams(para);
 
     }
 
@@ -68,6 +68,7 @@ public class MainCommandBin extends RobotActivity {
         }
         output.append(text);
         mOutput.setText(output.toString());
+        scrollDown();
     }
 
     public void sendPostDelayCommand(String Command, long time){
@@ -88,20 +89,32 @@ public class MainCommandBin extends RobotActivity {
         // as you specify a parent activity in AndroidManifest.xml.
 
         //noinspection SimplifiableIfStatement
+
+
+        ViewGroup.LayoutParams para = mScrollView.getLayoutParams();
+        para.height = 50;
         switch (item.getItemId()) {
             case R.id.toDebug:
                 mViewControl.setDisplayedChild(2);
                 system_print("Flip to LAb 7");
-                return true;
+                break;
             case R.id.toFSM:
                 mViewControl.setDisplayedChild(1);
                 system_print("Flip to FSM");
-                return true;
+                break;
+            case R.id.toBallColorTrainner:
+                para.height = HEIGHT_WHEN_AT_MAIN_SCREEN;
+                mViewControl.setDisplayedChild(0);
+                system_print("Flip to Main");
+                break;
             default:
                 system_print("Unidentified menu button");
                 return super.onOptionsItemSelected(item);
 
         }
+        mScrollView.setLayoutParams(para);
+        scrollDown();
+        return true;
     }
 
     @Override
@@ -109,12 +122,19 @@ public class MainCommandBin extends RobotActivity {
         if(commandString!=null) {
             super.sendCommand(commandString);
             system_print(commandString);
-            mScrollView.fullScroll(mScrollView.FOCUS_DOWN);
         }
     }
 
     public void postDelayScript(Script script, int time) {
         mCommandHandler.postDelayed(new ScriptRunHandler(script,this), time);
+    }
+    public void scrollDown() {
+        mCommandHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mScrollView.fullScroll(mScrollView.FOCUS_DOWN);
+            }
+        },50);
     }
 }
 
