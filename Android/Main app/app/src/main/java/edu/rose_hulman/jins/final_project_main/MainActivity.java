@@ -15,11 +15,12 @@ import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import edu.rose_hulman.everhadg.TempSubFSMTemp;
+import edu.rose_hulman.jins.ball_color_detector.BallColorTrainner;
 import edu.rose_hulman.jins.fsm_main.FSM_System;
 import edu.rose_hulman.jins.script_runing.Scripts;
 import edu.rose_hulman.me435Library.RobotActivity;
 
-public class MainActivity extends TempSubFSMTemp {
+public class MainActivity extends BallColorTrainner {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

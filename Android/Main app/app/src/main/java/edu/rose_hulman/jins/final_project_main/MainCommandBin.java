@@ -24,7 +24,7 @@ public class MainCommandBin extends RobotActivity {
 
 
     private TextView mOutput;
-    private InstanceStorage mStorage;
+    protected InstanceStorage mStorage;
     private ViewFlipper mViewControl;
     private ScrollView mScrollView;
 
