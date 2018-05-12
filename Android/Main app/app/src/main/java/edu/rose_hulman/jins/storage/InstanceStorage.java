@@ -3,6 +3,7 @@ package edu.rose_hulman.jins.storage;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.Parcel;
 
 import com.google.gson.Gson;
@@ -52,41 +53,14 @@ public class InstanceStorage {
     }
 
     public void store(String key, HashMap map) {
-//        //Try serializable
-//        StringBuilder tostore = new StringBuilder();
-//        Iterator forCheck = map.keySet().iterator();
-//
-//        tostore.append("HashMap ");
-//        if(!forCheck.hasNext()){
-//            error("The HashMap Don't Contain any Key");
-//            return;
-//        }else {
-//            Object k = forCheck.next();
-//            if (!(k instanceof String)) {
-//                error("The HashMap Key is not the String, this method only works for String Key");
-//                return;
-//            }
-//
-//            if (map.get(k) instanceof String) {
-//                tostore.append("String ");
-//            }else if(map.get(k) instanceof Integer) {
-//                tostore.append("Integer ");
-//            }else{
-//                error("The HashMap Value is not the String or Integer, this method only works for those Value");
-//                return;
-//            }
-//
-//        }
-//        for (Object k : map.keySet()) {
-//            tostore.append(k);
-//            tostore.append(" ");
-//            tostore.append(map.get(k));
-//            tostore.append(" ");
-//        }
-//        store(key, tostore.toString());
         Gson test = new Gson();
         store(key,test.toJson(map));
 
+    }
+
+    public void store(String key, Location location) {
+        Gson test = new Gson();
+        store(key,test.toJson(location));
     }
 
     public int readint(String key) {
@@ -116,6 +90,17 @@ public class InstanceStorage {
             return null;
         }
         HashMap<String,Integer> toReturn = (HashMap<String,Integer>) gson.fromJson(jsonText, HashMap.class);
+        return toReturn;
+    }
+
+
+    public Location readLocation(String key) {
+        Gson gson = new Gson();
+        String jsonText = readString(key);
+        if(jsonText == ""){
+            return null;
+        }
+        Location toReturn = gson.fromJson(jsonText, Location.class);
         return toReturn;
     }
 
