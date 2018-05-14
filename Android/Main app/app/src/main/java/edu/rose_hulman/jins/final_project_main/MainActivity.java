@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
@@ -26,6 +27,8 @@ public class MainActivity extends BallColorTrainner {
     protected void onCreate(Bundle savedInstanceState) {
         //Set up for the initial frame
         super.onCreate(savedInstanceState);
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         //Set up the tool bar
         Toolbar toolbar = findViewById(R.id.toolbar);

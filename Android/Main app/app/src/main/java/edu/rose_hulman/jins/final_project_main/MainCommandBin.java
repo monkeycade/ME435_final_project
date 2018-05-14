@@ -96,11 +96,12 @@ public class MainCommandBin extends RobotActivity {
         para.height = 50;
         switch (item.getItemId()) {
             case R.id.toDebug:
-                mViewControl.setDisplayedChild(2);
-                system_print("Flip to LAb 7");
+                para.height = HEIGHT_WHEN_AT_MAIN_SCREEN;
+                mViewControl.setDisplayedChild(0);
+                system_print("Flip to Main Activity");
                 break;
             case R.id.toFSM:
-                mViewControl.setDisplayedChild(1);
+                mViewControl.setDisplayedChild(2);
                 system_print("Flip to FSM");
                 break;
             case R.id.toBallColorTrainner:
