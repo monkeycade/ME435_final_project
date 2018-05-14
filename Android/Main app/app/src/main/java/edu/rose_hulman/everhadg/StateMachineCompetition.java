@@ -529,9 +529,9 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
             int slowDown = 40;
             mLeftDutyCycle = LEFT_PWM_VALUE_FOR_STRAIGHT - slowDown;
             mRightDutyCycle = RIGHT_PWM_VALUE_FOR_STRAIGHT - slowDown;
-            double p_gain = 5;
-            double d_gain = 1;
-            double i_gain = .5;
+            double p_gain = 10;
+            double d_gain = 2;
+            double i_gain = 1;
             if (mConeSize >= mImageStopThresh) {
                 mWithinRange = true;
                 setSubState(SubState.OPTIONAL_SCRIPT);
