@@ -399,8 +399,14 @@ public class StateMachineCompetition extends FSM_System implements FieldGpsListe
 
         switch (newSubState) {
             case GPS_SEEKING:
+                mSumHeadingError = 0;
+                mLastHeadingError = 0;
+                mHeadingError = 0;
                 break;
             case IMAGE_REC_SEEKING:
+                mSumHeadingError = 0;
+                mLastHeadingError = 0;
+                mHeadingError = 0;
                 break;
             case OPTIONAL_SCRIPT:
                 break;
@@ -453,7 +459,6 @@ public class StateMachineCompetition extends FSM_System implements FieldGpsListe
 
             mRightDutyCycle = Math.max(mRightDutyCycle, LOWEST_DESIRABLE_DUTY_CYCLE);
         }
-        //LOOP_INTERVAL_MS
 
         sendCommand("WHEEL SPEED FORWARD " + mRightDutyCycle + " FORWARD " + mLeftDutyCycle);
     }
