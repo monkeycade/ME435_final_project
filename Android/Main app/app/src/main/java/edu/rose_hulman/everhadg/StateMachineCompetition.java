@@ -22,6 +22,7 @@ import org.opencv.imgproc.Moments;
 
 import java.util.List;
 
+import edu.rose_hulman.jins.ball_color_detector.BallColorTrainner;
 import edu.rose_hulman.jins.final_project_main.MainCommandBin;
 import edu.rose_hulman.jins.final_project_main.R;
 import edu.rose_hulman.me435Library.FieldGps;
@@ -57,7 +58,7 @@ import edu.rose_hulman.me435Library.NavUtils;
  *
  */
 
-public class StateMachineCompetition extends MainCommandBin implements FieldGpsListener, FieldOrientationListener, CameraBridgeViewBase.CvCameraViewListener2{
+public class StateMachineCompetition extends BallColorTrainner implements FieldGpsListener, FieldOrientationListener, CameraBridgeViewBase.CvCameraViewListener2{
 
     public enum State {
         READY_FOR_MISSION,INITIAL_STRAIGHT,NEAR_BALL_MISSION,FAR_BALL_MISSION,HOME_CONE_MISSION,WAITING_FOR_PICKUP,SEEKING_HOME;
