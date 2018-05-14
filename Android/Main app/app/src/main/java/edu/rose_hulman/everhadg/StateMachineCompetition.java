@@ -110,6 +110,8 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
 
     private int mGpsCounter = 0;
     private double mTargetHeading,mLeftTurnAmount,mRightTurnAmount, mXTarget,mYTarget,mCurrentHeading;
+    private double mLeftRightCone = 0;
+    private double mConeSize;
 
     private int mLeftDutyCycle,mRightDutyCycle;
 
@@ -117,7 +119,7 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
     private double mLastHeadingError = 0;
     private double mSumHeadingError = 0;
 
-    private double mDetectionThresh = 0.01;
+    //private double mDetectionThresh = 0.01;
     private double mImageStopThresh = 0.07;
 
     /**
@@ -560,8 +562,8 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
         mLeftDutyCycle = LEFT_PWM_VALUE_FOR_STRAIGHT;
         mRightDutyCycle = RIGHT_PWM_VALUE_FOR_STRAIGHT;
         mTargetHeading = NavUtils.getTargetHeading(mCurrentGpsX, mCurrentGpsY, xTarget, yTarget);
-        mLeftTurnAmount = NavUtils.getLeftTurnHeadingDelta(mCurrentGpsHeading, mTargetHeading);
-        mRightTurnAmount = NavUtils.getRightTurnHeadingDelta(mCurrentGpsHeading, mTargetHeading);
+        mLeftTurnAmount = NavUtils.getLeftTurnHeadingDelta(mCurrentHeading, mTargetHeading);
+        mRightTurnAmount = NavUtils.getRightTurnHeadingDelta(mCurrentHeading, mTargetHeading);
 
         mXTarget = xTarget;
         mYTarget = yTarget;
@@ -580,7 +582,7 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
         double i_gain = .05;
 
 
-        if(NavUtils.targetIsOnLeft(mCurrentGpsX,mCurrentGpsY,mCurrentGpsHeading,xTarget,yTarget)){//if (mLeftTurnAmount < mRightTurnAmount) {
+        if(NavUtils.targetIsOnLeft(mCurrentGpsX,mCurrentGpsY,mCurrentHeading,xTarget,yTarget)){//if (mLeftTurnAmount < mRightTurnAmount) {
             mLastHeadingError = mHeadingError;
             mHeadingError = mLeftTurnAmount;
             mSumHeadingError += mHeadingError;
@@ -657,10 +659,6 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
         }
     }
 
-    protected void onToggleTeam(View view){
-
-    }
-
     public void handleSetOrigin(View view){
         mFieldGps.setCurrentLocationAsOrigin();
     }
@@ -672,15 +670,19 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
      * Displays the blob target info in the text views.
      */
     public void onImageRecComplete(boolean coneFound, double leftRightLocation, double topBottomLocation, double sizePercentage) {
-//        if (coneFound) {
+        if (coneFound) {
+            mLeftRightCone = leftRightLocation;
+            mConeSize = sizePercentage;
 //            mLeftRightLocationTextView.setText(String.format("%.3f", leftRightLocation));
 //            mTopBottomLocationTextView.setText(String.format("%.3f", topBottomLocation));
 //            mSizePercentageTextView.setText(String.format("%.5f", sizePercentage));
-//        } else {
+        } else {
+            mLeftRightCone = 0;
+            mConeSize = 0;
 //            mLeftRightLocationTextView.setText("---");
 //            mTopBottomLocationTextView.setText("---");
 //            mSizePercentageTextView.setText("---");
-//        }
+        }
     }
 
 
