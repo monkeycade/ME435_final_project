@@ -67,6 +67,11 @@ public class BallColorTrainner extends TempSubFSMTemp {
         checkall = false;
     }
 
+    public void identifyColor(){
+        mValidation.setChecked(true);
+        color_debug_get_all_ball_color(null);
+
+    }
     private void colordebugGetBallColorSender(int location) {
         sendCommand("CUSTOM Detect Color at " + location);
     }
