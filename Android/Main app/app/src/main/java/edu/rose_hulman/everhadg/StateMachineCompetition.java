@@ -2,12 +2,9 @@ package edu.rose_hulman.everhadg;
 
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.RotateAnimation;
-import android.widget.ImageView;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import org.opencv.android.BaseLoaderCallback;
@@ -22,12 +19,9 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
 
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import edu.rose_hulman.jins.final_project_main.MainCommandBin;
 import edu.rose_hulman.jins.final_project_main.R;
-import edu.rose_hulman.jins.fsm_main.FSM_System;
 import edu.rose_hulman.me435Library.FieldGps;
 import edu.rose_hulman.me435Library.FieldGpsListener;
 import edu.rose_hulman.me435Library.FieldOrientation;
@@ -101,6 +95,7 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
 
 
     private TextView mCurrentStateTextView,mSubStateTextView,mGPSTextView,mTargetXYTextView,mTargetHeadingTextView,mTurnAmountTextView;
+    private ToggleButton mTeamToggle;
     private CameraBridgeViewBase mOpenCvCameraView;
 
     public int mYellowX = 240, mYellowY = -50, mGreenX = 90, mGreenY = 50, mRedX = 90, mRedY = -50,mBlueX = 240, mBlueY = 50;
@@ -158,8 +153,20 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
 
     }
 
-    protected void upDateGoals(View view){
-
+    protected void upDateGoals(View view) {
+    }
+    protected void upDateTeamGoals(){
+        if(mIsRedTeam){
+            mYellowX = 240; mYellowY = -50;
+            mGreenX = 90;   mGreenY = 50;
+            mRedX = 90;     mRedY = -50;
+            mBlueX = 240;   mBlueY = 50;
+        } else {
+            mYellowX = 90;  mYellowY = 50;
+            mGreenX = 240;  mGreenY = -50;
+            mRedX = 240;    mRedY = 50;
+            mBlueX = 90;    mBlueY = -50;
+        }
     }
 
 
@@ -187,7 +194,22 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
         mTargetHeadingTextView = findViewById(R.id.headingLabel);
         mTurnAmountTextView = findViewById(R.id.turnAmountLabel);
 
-        mCurrentGpsHeading = 0;
+        setState(State.READY_FOR_MISSION);
+        setSubState(SubState.INACTIVE);
+        mFieldOrientation = new FieldOrientation(this);
+        mFieldGps = new FieldGps(this);
+        mTeamToggle = findViewById(R.id.teamToggleButton);
+        mTeamToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    mIsRedTeam = false;
+                    upDateTeamGoals();
+                } else {
+                    mIsRedTeam = true;
+                    upDateTeamGoals();
+                }
+            }
+        });
         mCurrentGpsX = 0;
         mCurrentGpsY = 0;
         mGpsCounter = 0;
@@ -464,8 +486,14 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
 
         switch (newSubState) {
             case GPS_SEEKING:
+                mSumHeadingError = 0;
+                mLastHeadingError = 0;
+                mHeadingError = 0;
                 break;
             case IMAGE_REC_SEEKING:
+                mSumHeadingError = 0;
+                mLastHeadingError = 0;
+                mHeadingError = 0;
                 break;
             case OPTIONAL_SCRIPT:
                 break;
@@ -518,7 +546,6 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
 
             mRightDutyCycle = Math.max(mRightDutyCycle, LOWEST_DESIRABLE_DUTY_CYCLE);
         }
-        //LOOP_INTERVAL_MS
 
         sendCommand("WHEEL SPEED FORWARD " + mRightDutyCycle + " FORWARD " + mLeftDutyCycle);
     }

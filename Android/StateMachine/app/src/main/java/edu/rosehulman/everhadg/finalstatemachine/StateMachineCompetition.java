@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -59,9 +60,10 @@ public class StateMachineCompetition extends RobotActivity implements FieldGpsLi
 
     public int mYellowX = 240, mYellowY = -50, mGreenX = 90, mGreenY = 50, mRedX = 90, mRedY = -50,mBlueX = 240, mBlueY = 50;
     public int mNearX, mNearY, mFarX, mFarY;
-    public boolean mIsRedTeam, mInSeekRange = false;
+    public boolean mIsRedTeam = true, mInSeekRange = false;
     public boolean mHasRed = true, mHasBlue = true, mHasWhite = true, mWithinRange = false;
     private TextView mCurrentStateTextView,mSubStateTextView,mGPSTextView,mTargetXYTextView,mTargetHeadingTextView,mTurnAmountTextView,mCommandTextView,mRedBallTextView,mWhiteBallTextView,mBlueBallTextView;
+    private ToggleButton mTeamToggle;
     private State mState;
     private SubState mSubState;
     private long mStateStartTime;
@@ -86,12 +88,18 @@ public class StateMachineCompetition extends RobotActivity implements FieldGpsLi
     private double mDetectionThresh = 0.01;
     private double mImageStopThresh = 0.07;
 
-    protected void upDateTeam(View view){
-
-    }
-
-    protected void upDateGoals(View view){
-
+    protected void upDateTeamGoals(){
+        if(mIsRedTeam){
+            mYellowX = 240; mYellowY = -50;
+            mGreenX = 90;   mGreenY = 50;
+            mRedX = 90;     mRedY = -50;
+            mBlueX = 240;   mBlueY = 50;
+        } else {
+            mYellowX = 90;  mYellowY = 50;
+            mGreenX = 240;  mGreenY = -50;
+            mRedX = 240;    mRedY = 50;
+            mBlueX = 90;    mBlueY = -50;
+        }
     }
 
 
@@ -108,8 +116,18 @@ public class StateMachineCompetition extends RobotActivity implements FieldGpsLi
         mTurnAmountTextView = findViewById(R.id.turnAmountLabel);*/
         setState(State.READY_FOR_MISSION);
         setSubState(SubState.INACTIVE);
-        //ToggleButton teamToggle = findViewById(R.id.teamToggleButton);
-        //teamToggle.setOnCheckedChangeListener(CompoundButton buttonView,);
+        mTeamToggle = findViewById(R.id.teamToggleButton);
+        mTeamToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    mIsRedTeam = false;
+                    upDateTeamGoals();
+                } else {
+                    mIsRedTeam = true;
+                    upDateTeamGoals();
+                }
+            }
+        });
         mCurrentGpsHeading = 0;
         mCurrentGpsX = 0;
         mCurrentGpsY = 0;
