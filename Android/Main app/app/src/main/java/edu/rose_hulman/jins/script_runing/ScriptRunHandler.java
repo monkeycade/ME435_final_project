@@ -6,29 +6,28 @@ import edu.rose_hulman.jins.final_project_main.MainCommandBin;
 public class ScriptRunHandler implements Runnable {
 
     String mString;
-    Script mScript;
+    Scripts mScript;
 
     MainCommandBin msystem;
 
     public ScriptRunHandler(String input, MainCommandBin system) {
         mString = input;
         msystem = system;
+        mScript = null;
     }
 
-    public ScriptRunHandler(Script input, MainCommandBin system) {
+    public ScriptRunHandler(String command, Scripts input, MainCommandBin system) {
         mScript = input;
         msystem = system;
 
-        mString = null;
+        mString = command;
     }
 
     @Override
     public void run() {
-        if (mString != null) {
-            msystem.sendCommand(mString);
-        }else{
-            msystem.sendCommand(mScript.handleNext());
-
+        msystem.sendCommand(mString);
+        if (mScript != null) {
+            mScript.handleScript(null);
         }
     }
 }

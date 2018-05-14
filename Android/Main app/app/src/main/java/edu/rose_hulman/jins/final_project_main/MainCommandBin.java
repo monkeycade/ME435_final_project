@@ -14,6 +14,7 @@ import java.util.HashMap;
 
 import edu.rose_hulman.jins.script_runing.Script;
 import edu.rose_hulman.jins.script_runing.ScriptRunHandler;
+import edu.rose_hulman.jins.script_runing.Scripts;
 import edu.rose_hulman.jins.storage.InstanceStorage;
 import edu.rose_hulman.me435Library.RobotActivity;
 
@@ -130,8 +131,8 @@ public class MainCommandBin extends RobotActivity {
         system_print(receivedCommand);
     }
 
-    public void postDelayScript(Script script, int time) {
-        mCommandHandler.postDelayed(new ScriptRunHandler(script,this), time);
+    public void postDelayScript(Scripts script, int time,String command) {
+        mCommandHandler.postDelayed(new ScriptRunHandler(command, script,this), time);
     }
     public void scrollDown() {
         mCommandHandler.postDelayed(new Runnable() {
@@ -140,6 +141,10 @@ public class MainCommandBin extends RobotActivity {
                 mScrollView.fullScroll(mScrollView.FOCUS_DOWN);
             }
         },50);
+    }
+
+    public void onScricptsComplete() {
+        system_print("The script all complete");
     }
 }
 
