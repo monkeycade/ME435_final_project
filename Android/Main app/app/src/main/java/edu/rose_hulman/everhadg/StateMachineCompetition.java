@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -60,6 +62,7 @@ public class StateMachineCompetition extends FSM_System implements FieldGpsListe
     public boolean mIsRedTeam, mInSeekRange = false;
     public boolean mHasRed = true, mHasBlue = true, mHasWhite = true, mWithinRange = false;
     private TextView mCurrentStateTextView,mSubStateTextView,mGPSTextView,mTargetXYTextView,mTargetHeadingTextView,mTurnAmountTextView,mCommandTextView,mRedBallTextView,mWhiteBallTextView,mBlueBallTextView;
+    private ToggleButton mTeamToggle;
     private State mState;
     private SubState mSubState;
     private long mStateStartTime;
@@ -84,12 +87,18 @@ public class StateMachineCompetition extends FSM_System implements FieldGpsListe
     private double mDetectionThresh = 0.01;
     private double mImageStopThresh = 0.07;
 
-    protected void upDateTeam(View view){
-
-    }
-
-    protected void upDateGoals(View view){
-
+    protected void upDateTeamGoals(){
+        if(mIsRedTeam){
+            mYellowX = 240; mYellowY = -50;
+            mGreenX = 90;   mGreenY = 50;
+            mRedX = 90;     mRedY = -50;
+            mBlueX = 240;   mBlueY = 50;
+        } else {
+            mYellowX = 90;  mYellowY = 50;
+            mGreenX = 240;  mGreenY = -50;
+            mRedX = 240;    mRedY = 50;
+            mBlueX = 90;    mBlueY = -50;
+        }
     }
 
 
@@ -110,8 +119,18 @@ public class StateMachineCompetition extends FSM_System implements FieldGpsListe
         setSubState(SubState.INACTIVE);
         mFieldOrientation = new FieldOrientation(this);
         mFieldGps = new FieldGps(this);
-        //ToggleButton teamToggle = findViewById(R.id.teamToggleButton);
-        //teamToggle.setOnCheckedChangeListener(CompoundButton buttonView,);
+        mTeamToggle = findViewById(R.id.teamToggleButton);
+        mTeamToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    mIsRedTeam = false;
+                    upDateTeamGoals();
+                } else {
+                    mIsRedTeam = true;
+                    upDateTeamGoals();
+                }
+            }
+        });
         mCurrentGpsHeading = 0;
         mCurrentGpsX = 0;
         mCurrentGpsY = 0;
