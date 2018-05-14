@@ -303,6 +303,7 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
             mTurnAmountTextView.setText("---");
         } else {
             mCurrentStateTextView.setText(mState.name() + " " + getStateTimeMS() / 1000);
+            mTargetHeadingTextView.setText("" + mTargetHeading);
         }
         if(mSubState == SubState.INACTIVE){
             mSubStateTextView.setText("---");
@@ -326,6 +327,7 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
                 }
                 break;
             case NEAR_BALL_MISSION:
+                mTargetXYTextView.setText("" + getString(R.string.xy_format, mNearX, mNearY));
                 switch (mSubState) {
                     case GPS_SEEKING:
                         seekTargetAt(mNearX,mNearY);
@@ -359,6 +361,7 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
                 }
                 break;
             case FAR_BALL_MISSION:
+                mTargetXYTextView.setText("" + getString(R.string.xy_format, mFarX, mFarY));
                 switch (mSubState) {
                     case GPS_SEEKING:
                         seekTargetAt(mFarX,mFarY);
@@ -398,6 +401,7 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
                 }
                 break;
             case HOME_CONE_MISSION:
+                mTargetXYTextView.setText("" + getString(R.string.xy_format, 0, 0));
                 switch (mSubState) {
                     case GPS_SEEKING:
                         seekTargetAt(0,0);
