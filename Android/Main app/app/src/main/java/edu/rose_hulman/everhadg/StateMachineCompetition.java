@@ -68,6 +68,7 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
         GPS_SEEKING,IMAGE_REC_SEEKING,OPTIONAL_SCRIPT, INACTIVE;
     }
 
+    
     private State mState;
     private SubState mSubState;
 
