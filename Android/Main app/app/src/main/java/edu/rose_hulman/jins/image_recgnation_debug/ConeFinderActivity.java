@@ -44,12 +44,12 @@ public class ConeFinderActivity extends MainCommandBin implements CameraBridgeVi
     /**
      * Records the latest boolean value for the cone found status.  True mean cone is visible.
      */
-    private boolean mConeFound;
+    public boolean mConeFound;
 
     /**
      * If mConeFound is true, then the location and size of the cone is described by these fields.
      */
-    private double mConeLeftRightLocation, mConeTopBottomLocation, mConeSize;
+    public double mConeLeftRightLocation, mConeTopBottomLocation, mConeSize;
 
 
     /**
@@ -78,21 +78,21 @@ public class ConeFinderActivity extends MainCommandBin implements CameraBridgeVi
     /**
      * Target color. An inside cone has an orange hue around 5 - 15, full saturation and value. (change as needed when outside)
      */
-    private int mConeTargetH = 5;
-    private int mConeTargetS = 255;
-    private int mConeTargetV = 255;
+    public int mConeTargetH = 5;
+    public int mConeTargetS = 255;
+    public int mConeTargetV = 255;
 
     /**
      * Range of acceptable colors. (change as needed)
      */
-    private int mConeRangeH = 25;
-    private int mConeRangeS = 50;
-    private int mConeRangeV = 50;
+    public int mConeRangeH = 25;
+    public int mConeRangeS = 50;
+    public int mConeRangeV = 50;
 
     /**
      * Minimum size needed to consider the target a cone. (change as needed)
      */
-    private double min_size_percentage = 0.001;
+    public double min_size_percentage = 0.001;
 
     /**
      * Screen size variables.
@@ -203,15 +203,16 @@ public class ConeFinderActivity extends MainCommandBin implements CameraBridgeVi
         mConeRangeH = mRangeHSeekBar.getProgress();
         mConeRangeS = mRangeSSeekBar.getProgress();
         mConeRangeV = mRangeVSeekBar.getProgress();
-        min_size_percentage = mRangeVSeekBar.getProgress() / 10000.0;
+        min_size_percentage = mSizeSeekBar.getProgress() / 10000.0;
         applyHsvTargetHsvRangeValues();
+        system_print("" + min_size_percentage);
         mRangeHTextView.setText("" + mConeRangeH);
         mRangeSTextView.setText("" + mConeRangeS);
         mRangeVTextView.setText("" + mConeRangeV);
         mResultTextView.setText("" + min_size_percentage);
     }
 
-    private void applyHsvTargetHsvRangeValues() {
+    protected void applyHsvTargetHsvRangeValues() {
         if (mDetector != null) {
             // Setup the target color.
             Scalar targetColorHsv = new Scalar(255);
@@ -466,7 +467,7 @@ public class ConeFinderActivity extends MainCommandBin implements CameraBridgeVi
     }
 
     public boolean onTouch(View v, MotionEvent event) {
-        if (mViewControl.getDisplayedChild() != 1) {
+        if (mViewControl.getDisplayedChild() != 4) {
             system_print("Don't listen for touch events if the camera is not visible.");
             return false;
         }
