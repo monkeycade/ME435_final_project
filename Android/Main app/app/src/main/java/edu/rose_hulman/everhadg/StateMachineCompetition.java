@@ -100,8 +100,14 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
     private ToggleButton mTeamToggle;
     private CameraBridgeViewBase mOpenCvCameraView;
 
+    /**
+     * Variables for ball locations:
+     *      mNear and mFar values should be set based on the balls that the robot has
+     */
     public int mYellowX = 240, mYellowY = -50, mGreenX = 90, mGreenY = 50, mRedX = 90, mRedY = -50,mBlueX = 240, mBlueY = 50;
     public int mNearX, mNearY, mFarX, mFarY;
+
+
     public boolean mIsRedTeam, mInSeekRange = false;
     public boolean mHasRed = true, mHasBlue = true, mHasWhite = true, mWithinRange = false;
 
@@ -112,6 +118,7 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
     private double mTargetHeading,mLeftTurnAmount,mRightTurnAmount, mXTarget,mYTarget,mCurrentHeading;
     private double mLeftRightCone = 0;
     private double mConeSize;
+    private boolean mConeFound = false;
 
     private int mLeftDutyCycle,mRightDutyCycle;
 
@@ -153,12 +160,6 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
         }
     };
 
-    protected void upDateTeam(View view){
-
-    }
-
-    protected void upDateGoals(View view) {
-    }
     protected void upDateTeamGoals(){
         if(mIsRedTeam){
             mYellowX = 240; mYellowY = -50;
@@ -343,7 +344,7 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
                         }
                         break;
                     case IMAGE_REC_SEEKING:
-//                        seekImage();
+                        seekImage();
                         //TODO fix it
                         if(mWithinRange){
                             mWithinRange = false;
@@ -367,8 +368,10 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
                             mTurnAmountTextView.setText("Right " + getString(R.string.degrees_format, mLeftTurnAmount));
                         }
                         mTargetHeadingTextView.setText("" + getString(R.string.degrees_format, mTargetHeading));
-                        if(mInSeekRange && seeSomething()){
-                            setSubState(SubState.IMAGE_REC_SEEKING);
+                        if(mConeFound && mWithinRange){
+                            if(mConeSize>MIN_SIZE_PERCENTAGE){
+                                setSubState(SubState.IMAGE_REC_SEEKING);
+                            }
                         }
                         if (mWithinRange) {
                             mWithinRange = false;
@@ -376,9 +379,7 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
                         }
                         break;
                     case IMAGE_REC_SEEKING:
-//                        seekImage();
-
-                        //TODO fix it
+                        seekImage();
                         if(mWithinRange){
                             mWithinRange = false;
                             setSubState(SubState.OPTIONAL_SCRIPT);
@@ -406,6 +407,11 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
                             mTurnAmountTextView.setText("Right " + getString(R.string.degrees_format, mLeftTurnAmount));
                         }
                         mTargetHeadingTextView.setText("" + getString(R.string.degrees_format, mTargetHeading));
+                        if(mConeFound && mWithinRange){
+                            if(mConeSize>MIN_SIZE_PERCENTAGE){
+                                setSubState(SubState.IMAGE_REC_SEEKING);
+                            }
+                        }
                         if (getSubStateTimeMS() > 15000) {
                             setSubState(SubState.OPTIONAL_SCRIPT);
                         }
@@ -433,7 +439,6 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
                             mTurnAmountTextView.setText("Right " + getString(R.string.degrees_format, mLeftTurnAmount));
                         }
                         mTargetHeadingTextView.setText("" + getString(R.string.degrees_format, mTargetHeading));
-                        if(seeSomething())
                         if (getSubStateTimeMS() > 5000) {
                             setState(State.WAITING_FOR_PICKUP);
                         }
@@ -520,42 +525,46 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
         return false;
     }
 
-    private void seekImage(double Target, double imageSize){
-        int slowDown = 50;
-        mLeftDutyCycle = LEFT_PWM_VALUE_FOR_STRAIGHT-slowDown;
-        mRightDutyCycle = RIGHT_PWM_VALUE_FOR_STRAIGHT-slowDown;
-        double p_gain = 1;
-        double d_gain = .1;
-        double i_gain = .05;
-        if(imageSize>=mImageStopThresh){
-            setSubState(SubState.OPTIONAL_SCRIPT);
-            sendCommand("WHEEL SPEED BRAKE 0 BRAKE 0");
-        }
-        if(Target<0){
-            mLastHeadingError = mHeadingError;
-            mHeadingError = Math.abs(Target);
-            mSumHeadingError += mHeadingError;
-            mLeftTurnAmount = p_gain*mHeadingError + d_gain*(mHeadingError-mLastHeadingError) + (i_gain*mSumHeadingError/getSubStateTimeMS());
-            mLeftDutyCycle = LEFT_PWM_VALUE_FOR_STRAIGHT - slowDown - (int)mLeftTurnAmount; // Using a VERY simple plan. :)
-            if(mLeftDutyCycle>LEFT_PWM_VALUE_FOR_STRAIGHT){
-                mLeftDutyCycle = LEFT_PWM_VALUE_FOR_STRAIGHT-slowDown;
+    private void seekImage(){
+        if(mConeFound) {
+            double Target = mLeftRightCone;
+            int slowDown = 40;
+            mLeftDutyCycle = LEFT_PWM_VALUE_FOR_STRAIGHT - slowDown;
+            mRightDutyCycle = RIGHT_PWM_VALUE_FOR_STRAIGHT - slowDown;
+            double p_gain = 5;
+            double d_gain = 1;
+            double i_gain = .5;
+            if (mConeSize >= mImageStopThresh) {
+                mWithinRange = true;
+                setSubState(SubState.OPTIONAL_SCRIPT);
+                sendCommand("WHEEL SPEED BRAKE 0 BRAKE 0");
             }
-            mLeftDutyCycle = Math.max(mLeftDutyCycle, LOWEST_DESIRABLE_DUTY_CYCLE);
-        } else {
-            mLastHeadingError = mHeadingError;
-            mHeadingError = Math.abs(Target);
-            mSumHeadingError += mHeadingError;
+            if (Target < 0) {
+                mLastHeadingError = mHeadingError;
+                mHeadingError = Math.abs(Target);
+                mSumHeadingError += mHeadingError;
+                mLeftTurnAmount = p_gain * mHeadingError + d_gain * (mHeadingError - mLastHeadingError) + (i_gain * mSumHeadingError / getSubStateTimeMS());
+                mLeftDutyCycle = LEFT_PWM_VALUE_FOR_STRAIGHT - slowDown - (int) mLeftTurnAmount; // Using a VERY simple plan. :)
+                if (mLeftDutyCycle > LEFT_PWM_VALUE_FOR_STRAIGHT) {
+                    mLeftDutyCycle = LEFT_PWM_VALUE_FOR_STRAIGHT - slowDown;
+                }
+                mLeftDutyCycle = Math.max(mLeftDutyCycle, LOWEST_DESIRABLE_DUTY_CYCLE);
+            } else {
+                mLastHeadingError = mHeadingError;
+                mHeadingError = Math.abs(Target);
+                mSumHeadingError += mHeadingError;
 
-            mRightTurnAmount = p_gain*mHeadingError + d_gain*(mHeadingError-mLastHeadingError) + (i_gain*mSumHeadingError/getSubStateTimeMS());
-            mRightDutyCycle = RIGHT_PWM_VALUE_FOR_STRAIGHT - slowDown - (int)mRightTurnAmount; // Could also scale it.
-            if(mRightDutyCycle>RIGHT_PWM_VALUE_FOR_STRAIGHT){
-                mRightDutyCycle = RIGHT_PWM_VALUE_FOR_STRAIGHT - slowDown;
+                mRightTurnAmount = p_gain * mHeadingError + d_gain * (mHeadingError - mLastHeadingError) + (i_gain * mSumHeadingError / getSubStateTimeMS());
+                mRightDutyCycle = RIGHT_PWM_VALUE_FOR_STRAIGHT - slowDown - (int) mRightTurnAmount; // Could also scale it.
+                if (mRightDutyCycle > RIGHT_PWM_VALUE_FOR_STRAIGHT) {
+                    mRightDutyCycle = RIGHT_PWM_VALUE_FOR_STRAIGHT - slowDown;
+                }
+
+                mRightDutyCycle = Math.max(mRightDutyCycle, LOWEST_DESIRABLE_DUTY_CYCLE);
             }
 
-            mRightDutyCycle = Math.max(mRightDutyCycle, LOWEST_DESIRABLE_DUTY_CYCLE);
+            sendCommand("WHEEL SPEED FORWARD " + mRightDutyCycle + " FORWARD " + mLeftDutyCycle);
         }
-
-        sendCommand("WHEEL SPEED FORWARD " + mRightDutyCycle + " FORWARD " + mLeftDutyCycle);
     }
 
     private void seekTargetAt(double xTarget, double yTarget) {
@@ -670,6 +679,7 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
      * Displays the blob target info in the text views.
      */
     public void onImageRecComplete(boolean coneFound, double leftRightLocation, double topBottomLocation, double sizePercentage) {
+        mConeFound = coneFound;
         if (coneFound) {
             mLeftRightCone = leftRightLocation;
             mConeSize = sizePercentage;
