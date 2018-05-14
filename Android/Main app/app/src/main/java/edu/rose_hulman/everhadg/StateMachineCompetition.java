@@ -108,8 +108,8 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
     public int mNearX, mNearY, mFarX, mFarY;
 
 
-    public boolean mIsRedTeam, mInSeekRange = false;
-    public boolean mHasRed = true, mHasBlue = true, mHasWhite = true, mWithinRange = false;
+    public boolean mIsRedTeam;
+    public boolean mHasRed = true, mHasBlue = true, mHasWhite = true, mWithinRange = false, mInSeekRange = false;
 
     private long mStateStartTime;
     private long mSubStateStartTime;
@@ -119,6 +119,7 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
     private double mLeftRightCone = 0;
     private double mConeSize;
     private boolean mConeFound = false;
+    private int mSeekRange = 40;
 
     private int mLeftDutyCycle,mRightDutyCycle;
 
@@ -282,7 +283,7 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
         }
         gpsInfo += "   " + mGpsCounter;
         mGPSTextView.setText(gpsInfo);
-        if(distToTarget()<30){
+        if(distToTarget()<mSeekRange){
             mInSeekRange = true;
         } else {
             mInSeekRange = false;
@@ -337,12 +338,8 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
                             mTurnAmountTextView.setText("Right " + getString(R.string.degrees_format, mRightTurnAmount));
                         }
                         mTargetHeadingTextView.setText("" + getString(R.string.degrees_format, mTargetHeading));
-                        if(mInSeekRange && seeSomething()){
+                        if((distToTarget()< mSeekRange && mConeFound){
                             setSubState(SubState.IMAGE_REC_SEEKING);
-                        }
-                        if (mWithinRange) {
-                            mWithinRange = false;
-                            setSubState(SubState.OPTIONAL_SCRIPT);
                         }
                         break;
                     case IMAGE_REC_SEEKING:
@@ -375,10 +372,6 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
                             if(mConeSize>MIN_SIZE_PERCENTAGE){
                                 setSubState(SubState.IMAGE_REC_SEEKING);
                             }
-                        }
-                        if (mWithinRange) {
-                            mWithinRange = false;
-                            setSubState(SubState.OPTIONAL_SCRIPT);
                         }
                         break;
                     case IMAGE_REC_SEEKING:
@@ -655,7 +648,7 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
         }
     }
 
-    public void notSeen(View view) {
+    /*public void notSeen(View view) {
         if (mSubState == SubState.IMAGE_REC_SEEKING) {
             setSubState(SubState.GPS_SEEKING);
         }
