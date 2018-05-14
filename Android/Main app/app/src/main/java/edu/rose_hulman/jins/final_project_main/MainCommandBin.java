@@ -103,9 +103,8 @@ public class MainCommandBin extends RobotActivity {
                 system_print("Flip to FSM");
                 break;
             case R.id.toBallColorTrainner:
-                para.height = HEIGHT_WHEN_AT_MAIN_SCREEN;
-                mViewControl.setDisplayedChild(0);
-                system_print("Flip to Main");
+                mViewControl.setDisplayedChild(3);
+                system_print("Flip to Ball Color Trainer");
                 break;
             default:
                 system_print("Unidentified menu button");
@@ -119,10 +118,16 @@ public class MainCommandBin extends RobotActivity {
 
     @Override
     public void sendCommand(String commandString) {
-        if(commandString!=null) {
+        if(commandString!= null) {
             super.sendCommand(commandString);
             system_print(commandString);
         }
+    }
+
+    @Override
+    protected void onCommandReceived(String receivedCommand) {
+        super.onCommandReceived(receivedCommand);
+        system_print(receivedCommand);
     }
 
     public void postDelayScript(Script script, int time) {

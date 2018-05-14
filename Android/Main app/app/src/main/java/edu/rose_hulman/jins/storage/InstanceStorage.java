@@ -7,12 +7,15 @@ import android.location.Location;
 import android.os.Parcel;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.security.Key;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import edu.rose_hulman.jins.ball_color_detector.BallColorDetector;
 import edu.rose_hulman.jins.final_project_main.MainCommandBin;
 
 public class InstanceStorage {
@@ -61,6 +64,11 @@ public class InstanceStorage {
     public void store(String key, Location location) {
         Gson test = new Gson();
         store(key,test.toJson(location));
+    }
+
+    public void store(String key, List dataList) {
+        Gson test = new Gson();
+        store(key,test.toJson(dataList));
     }
 
     public int readint(String key) {
@@ -114,8 +122,23 @@ public class InstanceStorage {
         return toReturn;
     }
 
-    private void error(String toReport) {
-
+    public ArrayList<BallColorDetector.Instance> readInstanceList(String key){
+        Gson gson = new Gson();
+        String jsonText = readString(key);
+        if(jsonText == ""){
+            return null;
+        }
+        ArrayList<BallColorDetector.Instance> toReturn = gson.fromJson(jsonText, new TypeToken<ArrayList<BallColorDetector.Instance>>(){}.getType());
+        return toReturn;
     }
 
+    public ArrayList<Double> readColorCoeffList(String key){
+        Gson gson = new Gson();
+        String jsonText = readString(key);
+        if(jsonText == ""){
+            return null;
+        }
+        ArrayList<Double> toReturn = gson.fromJson(jsonText, new TypeToken<ArrayList<Double>>(){}.getType());
+        return toReturn;
+    }
 }

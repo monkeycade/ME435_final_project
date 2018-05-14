@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="5dp"
+    tools:context="edu.rose_hulman.jins.ball_color_detector.BallColorTrainner">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Test All Ball"
+        android:id="@+id/color_debugger_top_button"/>
+
+    <ToggleButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:textOn="Check Validation"
+        android:textOff="Not check Validation" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="left"
+        android:orientation="horizontal"
+        android:layout_below="@id/color_debugger_top_button">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Get Color"
+                android:onClick="color_debug_get_ball_color_at_1"/>
+
+            <ImageButton
+                android:id="@+id/color_debugger_image_button_1"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:background="#0444"
+                android:scaleType="fitCenter"
+                android:src="@drawable/none_ball"
+                android:onClick="color_debug_handle_ball_change_at_1"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ready"
+                android:id="@+id/color_debugger_ball_confidence_at_1"
+                android:textColor="#00ff00"
+                android:textAlignment="center"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="no data"
+                android:id="@+id/color_debugger_ball_other_data_at_1"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="train Color"
+                android:onClick="color_debug_train_ball_color_at_1"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Get Color"
+                android:onClick="color_debug_get_ball_color_at_2"/>
+
+            <ImageButton
+                android:id="@+id/color_debugger_image_button_2"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:background="#0444"
+                android:scaleType="fitCenter"
+                android:src="@drawable/none_ball"
+                android:onClick="color_debug_handle_ball_change_at_2"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ready"
+                android:id="@+id/color_debugger_ball_confidence_at_2"
+                android:textColor="#00ff00"
+                android:textAlignment="center"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="no data"
+                android:id="@+id/color_debugger_ball_other_data_at_2"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="train Color"
+                android:onClick="color_debug_train_ball_color_at_2"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Get Color"
+                android:onClick="color_debug_get_ball_color_at_3"/>
+
+            <ImageButton
+                android:id="@+id/color_debugger_image_button_3"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:background="#0444"
+                android:scaleType="fitCenter"
+                android:src="@drawable/none_ball"
+                android:onClick="color_debug_handle_ball_change_at_3"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ready"
+                android:id="@+id/color_debugger_ball_confidence_at_3"
+                android:textColor="#00ff00"
+                android:textAlignment="center"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="no data"
+                android:id="@+id/color_debugger_ball_other_data_at_3"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="train Color"
+                android:onClick="color_debug_train_ball_color_at_3"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

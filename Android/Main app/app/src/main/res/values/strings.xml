@@ -2,6 +2,16 @@
     <string name="app_name">ME435_final_project</string>
     <string name="action_settings">Settings</string>
 
+    //BallColorTrainer string part
+    <string-array name="ball_color_debug_ball_colors">
+        <item >Black</item>
+        <item >Blue</item>
+        <item >Green</item>
+        <item >Red</item>
+        <item >Yellow</item>
+        <item >White</item>
+    </string-array>
+
     //FSM string part
     <string-array name="ball_colors">
         <item >None</item>

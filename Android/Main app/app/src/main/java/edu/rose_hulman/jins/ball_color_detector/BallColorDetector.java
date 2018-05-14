@@ -15,19 +15,55 @@ public class BallColorDetector {
     private final static int MAX_ITERATIONS = 80000;
     private final static double TOLERANCE = 0.0001;
 
-    //[ball,R,G,B,OFF,WHITE]
-    List<Instance> ballColorData;
-    //[BALL FOLLOW SEQUENCE BY CONSTANT][R_coeff,G_coeff,B_coeff,OFF_coeff,WHITE_coeff]
-    double[][] calculationCoeff;
+    //[ball,R,G,B,WHITE,OFF]
+    private List<Instance> ballColorData;
+    //[BALL FOLLOW SEQUENCE BY CONSTANT][R_coeff,G_coeff,B_coeff,WHITE_coeff,OFF_coeff]
+    private double[][] calculationCoeff;
 
-    public BallColorDetector() {
-        this(new double[6][5], null);
+    private StringBuilder errorData;
+
+
+    public BallColorDetector(List<Double> storedcoef, List<Instance> storedColorData) {
+        errorData = new StringBuilder();
+        calculationCoeff = new double[6][5];
+        if(storedcoef == null || storedcoef.size() < 30){
+            errorData.append("The input coefficient is " + storedcoef == null ? "null" : "not enough");
+        }else {
+            for (int ball = 0; ball < 6; ball++) {
+                for (int i = 0; i < 5; i++) {
+                    calculationCoeff[ball][i] = storedcoef.get(ball * 6 + i);
+                }
+            }
+        }
+        ballColorData = storedColorData;
+        if (storedColorData == null){
+            ballColorData =  new ArrayList<Instance>();
+            errorData.append("The input ball Data is null");
+        }
+
+        rate = 0.0001;
+
+        train();
     }
 
-    public BallColorDetector(double[][] storedcoef, ArrayList<Integer[]> storedColorData) {
-        calculationCoeff = storedcoef;
-        ballColorData = readDataSet(storedColorData);
-        rate = 0.0001;
+    public String getErrorData(){
+        String toReturn = errorData.toString();
+        errorData = new StringBuilder();
+        return toReturn;
+    }
+
+    public List<Double> gettostoreCoefficient(){
+        ArrayList<Double> coeftoStore = new ArrayList<>();
+        for (int ball = 0; ball < 6; ball++) {
+            for (int i = 0; i < 5; i++) {
+                coeftoStore.add(calculationCoeff[ball][i]);
+            }
+        }
+        return coeftoStore;
+    }
+
+    public List<Instance> gettostoreInstance(){
+        return ballColorData;
     }
 
     public void train() {
@@ -79,25 +115,25 @@ public class BallColorDetector {
         }
     }
 
-    public List<Instance> readDataSet(ArrayList<Integer[]> storedColorData) {
-        List<Instance> dataset = new ArrayList<Instance>();
-        if (storedColorData != null) {
-            //iterate the ball colar data
-            for (int i = 0; i < storedColorData.size(); i++) {
-                Integer[] data = storedColorData.get(i);
-                //get R G B OFF WHITE info
-                int[] temp = new int[5];
-                for (i = 1; i < temp.length; i++) {
-                    temp[i - 1] = data[i];
-                }
-                //get ball color info
-                int label = data[0];
-                Instance instance = new Instance(label, temp);
-                dataset.add(instance);
-            }
-        }
-        return dataset;
-    }
+//    public List<Instance> readDataSet(ArrayList<Integer[]> storedColorData) {
+//        List<Instance> dataset = new ArrayList<Instance>();
+//        if (storedColorData != null) {
+//            //iterate the ball colar data
+//            for (int i = 0; i < storedColorData.size(); i++) {
+//                Integer[] data = storedColorData.get(i);
+//                //get R G B OFF WHITE info
+//                int[] temp = new int[5];
+//                for (i = 1; i < temp.length; i++) {
+//                    temp[i - 1] = data[i];
+//                }
+//                //get ball color info
+//                int label = data[0];
+//                Instance instance = new Instance(label, temp);
+//                dataset.add(instance);
+//            }
+//        }
+//        return dataset;
+//    }
 
     private static double sigmoid(double z) {
         return 1.0 / (1.0 + Math.exp(-z));

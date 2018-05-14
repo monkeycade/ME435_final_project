@@ -20,6 +20,8 @@
 
         <include layout="@layout/lab7_layout"/>
 
+        <include layout="@layout/ball_color_layout"/>
+
     </ViewFlipper>
 
 </RelativeLayout>
