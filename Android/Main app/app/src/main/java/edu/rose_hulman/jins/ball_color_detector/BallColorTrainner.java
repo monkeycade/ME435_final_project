@@ -12,7 +12,6 @@ import java.util.List;
 
 import edu.rose_hulman.everhadg.TempSubFSMTemp;
 import edu.rose_hulman.jins.final_project_main.R;
-import edu.rose_hulman.jins.fsm_main.FSM_System;
 
 public class BallColorTrainner extends TempSubFSMTemp {
     public final static String BALL_DATA_KEY = "Ball data at location ";
@@ -23,21 +22,14 @@ public class BallColorTrainner extends TempSubFSMTemp {
      * An array constants (of size 7) that keeps a reference to the different ball color images resources.
      */
     // Note, the order is important and must be the same throughout the app.
-    private static final int[] BALL_DRAWABLE_RESOURCES = new int[]{R.drawable.none_ball,R.drawable.black_ball,
+    private static final int[] BALL_DRAWABLE_RESOURCES = new int[]{R.drawable.none_ball, R.drawable.black_ball,
             R.drawable.blue_ball, R.drawable.green_ball, R.drawable.red_ball, R.drawable.yellow_ball, R.drawable.white_ball};
 
-
-    public final static int BALL_NONE = -1;
-    public final static int BALL_BLACK = 0;
-    public final static int BALL_BLUE = 1;
-    public final static int BALL_GREEN = 2;
-    public final static int BALL_RED = 3;
-    public final static int BALL_YELLOW = 4;
-    public final static int BALL_WHITE = 5;
+    private BallColorDetector.BallResult[] ballcolors;
 
     private BallColorDetector[] ballHandlers;
     private ImageButton[] mBallImageButtons;
-    private TextView[] mBallConfidences;
+    private TextView[] mBallConfidences, mBallOtherResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +38,9 @@ public class BallColorTrainner extends TempSubFSMTemp {
         mBallConfidences = new TextView[]{findViewById(R.id.color_debugger_ball_confidence_at_1),
                 findViewById(R.id.color_debugger_ball_confidence_at_2),
                 findViewById(R.id.color_debugger_ball_confidence_at_3)};
+        mBallOtherResult = new TextView[]{findViewById(R.id.color_debugger_ball_other_data_at_1),
+                findViewById(R.id.color_debugger_ball_other_data_at_2),
+                findViewById(R.id.color_debugger_ball_other_data_at_3)};
         mBallImageButtons = new ImageButton[]{findViewById(R.id.color_debugger_image_button_1),
                 findViewById(R.id.color_debugger_image_button_2),
                 findViewById(R.id.color_debugger_image_button_3)};
@@ -56,12 +51,54 @@ public class BallColorTrainner extends TempSubFSMTemp {
             List coef = mStorage.readColorCoeffList(BALL_COEFFICIENT_KEY + location);
             List balldata = mStorage.readInstanceList(BALL_DATA_KEY + location);
             ballHandlers[location - 1] = new BallColorDetector(coef, balldata);
+            String errorReport = ballHandlers[location - 1].getErrorData();
+            if (!errorReport.equals("")) {
+                system_print("At location " + location + "\n" + errorReport);
+            }
+        }
+        ballcolors = new BallColorDetector.BallResult[3];
+    }
+
+    private void colordebugGetBallColorSender(int location) {
+        sendCommand("CUSTOM Detect Color at " + location);
+    }
+
+    @Override
+    protected void onCommandReceived(String receivedCommand) {
+        super.onCommandReceived(receivedCommand);
+        if (receivedCommand.substring(0, 8).equalsIgnoreCase("location")) {
+            String[] data = receivedCommand.split(" ");
+            int location = Integer.parseInt(data[1]);
+            if (data.length < 4) {
+                colordebugHandleChangeBallhelper(location, -1, false);
+            } else {
+                int[] x = new int[5];
+                for (int i = 2; i < data.length; i++) {
+                    x[i - 2] = Integer.parseInt(data[i]);
+                }
+                detectBallColor(location, x);
+            }
         }
     }
 
-    private void colordebugGetBallColor(int location) {
-        sendCommand("CUSTOM Detect Color at " + location);
-        system_print("get data for the location " + location);
+    private void detectBallColor(int location, int[] x) {
+        int index = location - 1;
+        ballcolors[location - 1] = ballHandlers[location - 1].guessBallColor(x);
+        colordebugHandleChangeBallhelper(location, ballcolors[location - 1].getColor(), false);
+        mBallOtherResult[index].setText(ballcolors[location - 1].toString());
+        double ballconf = Math.round(ballcolors[location - 1].result().mconf * 10000) / 100.0;
+        mBallConfidences[index].setText(ballconf + "%");
+        if (ballconf > 90) {
+            mBallConfidences[location - 1].setTextColor(Color.parseColor("#00ff00"));
+        } else if (ballconf > 75) {
+            mBallConfidences[location - 1].setTextColor(Color.parseColor("#0f0f00"));
+        } else if (ballconf > 65) {
+            mBallConfidences[location - 1].setTextColor(Color.parseColor("#f00f00"));
+        } else {
+            mBallConfidences[location - 1].setTextColor(Color.parseColor("#ff0000"));
+        }
+//        system_print("" + ballHandlers[location - 1].classify(x, BALL_BLUE));
+
     }
 
     private void colordebugHandleChangeBall(final int location) {
@@ -69,33 +106,69 @@ public class BallColorTrainner extends TempSubFSMTemp {
         builder.setTitle("What was the real color?").setItems(R.array.ball_color_debug_ball_colors,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        BallColorTrainner.this.colordebugHandleChangeBallhelper(location, which);
+                        BallColorTrainner.this.colordebugHandleChangeBallhelper(location, which, true);
                     }
                 });
         builder.create().show();
     }
 
-    private void colordebugHandleChangeBallhelper(int location, int which) {
+    private void colordebugHandleChangeBallhelper(final int location, int which, boolean askTrain) {
         mBallImageButtons[location - 1].setImageResource(BALL_DRAWABLE_RESOURCES[which + 1]);
         mBallConfidences[location - 1].setText("Modified");
         mBallConfidences[location - 1].setTextColor(Color.parseColor("#0000ff"));
+        if ((ballcolors[location - 1] == null || ballcolors[location - 1].getColor() != which) && askTrain) {
+            ballcolors[location - 1].setColor(which);
+            AlertDialog.Builder builder = new AlertDialog.Builder(BallColorTrainner.this);
+            builder.setMessage("Train this Data?").
+                    setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            balltrainnerhelper(location, ballcolors[location - 1]);
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // Do Nothing
+                        }
+                    });
+            builder.create().show();
+
+        }
     }
 
+    private void balltrainnerhelper(int location, BallColorDetector.BallResult result) {
+        int index = location - 1;
+        ballHandlers[location - 1].addNewData(result);
+        detectBallColor(location, result.reading);
+        mStorage.store(BALL_COEFFICIENT_KEY + location,ballHandlers[location - 1].gettostoreCoefficient());
+        mStorage.store(BALL_DATA_KEY + location,ballHandlers[location - 1].gettostoreInstance());
+    }
 
-    private void colordebugHandleTrainBall(int location) {
-
+    private void colordebugHandleTrainBall(final int location) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(BallColorTrainner.this);
+        builder.setMessage("Train this Data?").
+                setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        balltrainnerhelper(location, ballcolors[location - 1]);
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // Do Nothing
+                    }
+                });
+        builder.create().show();
     }
 
     public void color_debug_get_ball_color_at_1(View view) {
-        colordebugGetBallColor(1);
+        colordebugGetBallColorSender(1);
     }
 
     public void color_debug_get_ball_color_at_2(View view) {
-        colordebugGetBallColor(2);
+        colordebugGetBallColorSender(2);
     }
 
     public void color_debug_get_ball_color_at_3(View view) {
-        colordebugGetBallColor(3);
+        colordebugGetBallColorSender(3);
     }
 
     public void color_debug_handle_ball_change_at_1(View view) {
