@@ -639,6 +639,13 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
         mCurrentGpsX = 0;
         mCurrentGpsY = 0;
         mGpsCounter = 0;
+        mTargetHeading = 0;
+        mWithinRange = false;
+        mConeFound = false;
+        mHeadingError = 0;
+        mLastHeadingError = 0;
+        mSumHeadingError = 0;
+        mTeamToggle.setChecked(false);
     }
 
     public void go(View view) {
