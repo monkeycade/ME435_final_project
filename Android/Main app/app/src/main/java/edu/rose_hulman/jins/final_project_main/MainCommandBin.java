@@ -26,7 +26,7 @@ public class MainCommandBin extends RobotActivity {
 
     private TextView mOutput;
     protected InstanceStorage mStorage;
-    private ViewFlipper mViewControl;
+    public ViewFlipper mViewControl;
     private ScrollView mScrollView;
 
 
@@ -107,6 +107,10 @@ public class MainCommandBin extends RobotActivity {
             case R.id.toBallColorTrainner:
                 mViewControl.setDisplayedChild(3);
                 system_print("Flip to Ball Color Trainer");
+                break;
+            case R.id.toImagRecTrainner:
+                mViewControl.setDisplayedChild(4);
+                system_print("Flip to Image Rec Trainer");
                 break;
             default:
                 system_print("Unidentified menu button");

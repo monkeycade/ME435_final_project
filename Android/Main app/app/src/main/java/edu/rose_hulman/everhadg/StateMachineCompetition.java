@@ -338,7 +338,7 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
                             mTurnAmountTextView.setText("Right " + getString(R.string.degrees_format, mRightTurnAmount));
                         }
                         mTargetHeadingTextView.setText("" + getString(R.string.degrees_format, mTargetHeading));
-                        if((distToTarget()< mSeekRange && mConeFound){
+                        if(distToTarget()< mSeekRange && mConeFound){
                             setSubState(SubState.IMAGE_REC_SEEKING);
                         }
                         break;

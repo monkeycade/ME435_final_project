@@ -16,8 +16,9 @@ import java.util.PriorityQueue;
 import edu.rose_hulman.everhadg.StateMachineCompetition;
 import edu.rose_hulman.everhadg.TempSubFSMTemp;
 import edu.rose_hulman.jins.final_project_main.R;
+import edu.rose_hulman.jins.image_recgnation_debug.ConeFinderActivity;
 
-public class BallColorTrainner extends StateMachineCompetition {
+public class BallColorTrainner extends ConeFinderActivity {
     public final static String BALL_DATA_KEY = "Ball data at location ";
 
     public final static String BALL_COEFFICIENT_KEY = "Ball coefficient at location ";
