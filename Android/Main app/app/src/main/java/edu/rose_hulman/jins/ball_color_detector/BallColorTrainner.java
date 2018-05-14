@@ -13,10 +13,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.PriorityQueue;
 
+import edu.rose_hulman.everhadg.StateMachineCompetition;
 import edu.rose_hulman.everhadg.TempSubFSMTemp;
 import edu.rose_hulman.jins.final_project_main.R;
 
-public class BallColorTrainner extends TempSubFSMTemp {
+public class BallColorTrainner extends StateMachineCompetition {
     public final static String BALL_DATA_KEY = "Ball data at location ";
 
     public final static String BALL_COEFFICIENT_KEY = "Ball coefficient at location ";
