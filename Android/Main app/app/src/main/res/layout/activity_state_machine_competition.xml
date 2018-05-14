@@ -13,8 +13,8 @@
         android:textSize="25dp"
         android:id="@+id/teamToggleButton"
         android:textColor="@android:color/holo_blue_bright"
-        android:textOff="Toggle Button OFF"
-        android:textOn="Toggle Button ON " />
+        android:textOff="Red Team"
+        android:textOn="Blue Team" />
 
     <LinearLayout
         android:id="@+id/displayTextLayout"

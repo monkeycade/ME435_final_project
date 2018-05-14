@@ -1,5 +1,6 @@
 package edu.rose_hulman.everhadg;
 
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
@@ -125,12 +126,15 @@ public class StateMachineCompetition extends FSM_System implements FieldGpsListe
                 if (isChecked) {
                     mIsRedTeam = false;
                     upDateTeamGoals();
+                    mTeamToggle.setBackgroundColor(Color.BLUE);
                 } else {
                     mIsRedTeam = true;
                     upDateTeamGoals();
+                    mTeamToggle.setBackgroundColor(Color.RED);
                 }
             }
         });
+        mTeamToggle.setChecked(false);
         mCurrentGpsHeading = 0;
         mCurrentGpsX = 0;
         mCurrentGpsY = 0;
