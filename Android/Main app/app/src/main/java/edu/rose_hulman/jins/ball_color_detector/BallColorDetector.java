@@ -1,5 +1,7 @@
 package edu.rose_hulman.jins.ball_color_detector;
 
+import android.support.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -140,7 +142,7 @@ public class BallColorDetector {
         return toReturn;
     }
 
-    protected class BallResult {
+    protected class BallResult implements Comparable<BallResult>{
         private PriorityQueue<Ball> results;
         protected int[] reading;
 
@@ -187,6 +189,11 @@ public class BallColorDetector {
         public void setColor(int which) {
             results = new PriorityQueue<>();
             results.add(new Ball(which, 0.01));
+        }
+
+        @Override
+        public int compareTo(BallResult o) {
+            return result().mconf - o.result().mconf > 0 ? -1 : 1;
         }
     }
 

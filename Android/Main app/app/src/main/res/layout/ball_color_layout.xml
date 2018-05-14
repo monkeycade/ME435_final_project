@@ -10,21 +10,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Test All Ball"
-        android:id="@+id/color_debugger_top_button"/>
+        android:onClick="color_debug_get_all_ball_color"/>
 
     <ToggleButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:textOn="Check Validation"
-        android:textOff="Not check Validation" />
+        android:textOff="Not check Validation"
+        android:id="@+id/color_debugger_check_validation"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="left"
         android:orientation="horizontal"
-        android:layout_below="@id/color_debugger_top_button">
+        android:layout_below="@id/color_debugger_check_validation">
 
         <LinearLayout
             android:layout_width="wrap_content"

@@ -7,8 +7,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.PriorityQueue;
 
 import edu.rose_hulman.everhadg.TempSubFSMTemp;
 import edu.rose_hulman.jins.final_project_main.R;
@@ -30,6 +33,9 @@ public class BallColorTrainner extends TempSubFSMTemp {
     private BallColorDetector[] ballHandlers;
     private ImageButton[] mBallImageButtons;
     private TextView[] mBallConfidences, mBallOtherResult;
+
+    private ToggleButton mValidation;
+    private boolean checkall;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +63,8 @@ public class BallColorTrainner extends TempSubFSMTemp {
             }
         }
         ballcolors = new BallColorDetector.BallResult[3];
+        mValidation = findViewById(R.id.color_debugger_check_validation);
+        checkall = false;
     }
 
     private void colordebugGetBallColorSender(int location) {
@@ -98,6 +106,71 @@ public class BallColorTrainner extends TempSubFSMTemp {
             mBallConfidences[location - 1].setTextColor(Color.parseColor("#ff0000"));
         }
 //        system_print("" + ballHandlers[location - 1].classify(x, BALL_BLUE));
+        if (checkall) {
+            if (location < 3) {
+                colordebugGetBallColorSender(location + 1);
+            } else {
+                checkall = false;
+                if (mValidation.isChecked()) {
+                    PriorityQueue<BallColorDetector.BallResult> temp = new PriorityQueue<>();
+                    for (int i = 0; i < 3; i++) {
+                        temp.add(ballcolors[i]);
+                    }
+                    while (temp.size() > 0) {
+                        BallColorDetector.BallResult current = temp.poll();
+                        int[] combo = getCombo(current.getColor());
+                        if (combo == null) {
+                            system_print("CHECK THE BALL, YOU DID MESS IT UP A LOT");
+                            break;
+                        }
+                        while (true) {
+                            boolean ischecked = true;
+                            for (int i = 0; i < 3; i++) {
+                                if (current != ballcolors[i]) {
+                                    if (containinCombo(combo, ballcolors[i].getColor())) {
+                                        ballcolors[i].next();
+                                        colordebugHandleChangeBallhelper(i + 1, ballcolors[i].getColor(), false);
+                                        ischecked = false;
+                                    }
+                                }
+                            }
+                            if (ischecked) {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    private boolean containinCombo(int[] combo, int color) {
+        for (int i = 0; i < combo.length; i++) {
+            if (combo[i] == color) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private int[] getCombo(int color) {
+        switch (color) {
+            case 0:
+                return new int[]{0, 5};
+            case 1:
+                return new int[]{1, 4};
+            case 2:
+                return new int[]{2, 3};
+            case 3:
+                return new int[]{2, 3};
+            case 4:
+                return new int[]{1, 4};
+            case 5:
+                return new int[]{0, 5};
+            default:
+                return null;
+        }
 
     }
 
@@ -139,24 +212,33 @@ public class BallColorTrainner extends TempSubFSMTemp {
         int index = location - 1;
         ballHandlers[location - 1].addNewData(result);
         detectBallColor(location, result.reading);
-        mStorage.store(BALL_COEFFICIENT_KEY + location,ballHandlers[location - 1].gettostoreCoefficient());
-        mStorage.store(BALL_DATA_KEY + location,ballHandlers[location - 1].gettostoreInstance());
+        mStorage.store(BALL_COEFFICIENT_KEY + location, ballHandlers[location - 1].gettostoreCoefficient());
+        mStorage.store(BALL_DATA_KEY + location, ballHandlers[location - 1].gettostoreInstance());
     }
 
     private void colordebugHandleTrainBall(final int location) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(BallColorTrainner.this);
-        builder.setMessage("Train this Data?").
-                setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        balltrainnerhelper(location, ballcolors[location - 1]);
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // Do Nothing
-                    }
-                });
-        builder.create().show();
+        if (ballcolors[location - 1] != null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(BallColorTrainner.this);
+            builder.setMessage("Train this Data?").
+                    setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            balltrainnerhelper(location, ballcolors[location - 1]);
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // Do Nothing
+                        }
+                    });
+            builder.create().show();
+        }
+    }
+
+
+    public void color_debug_get_all_ball_color(View view) {
+        checkall = true;
+        colordebugGetBallColorSender(1);
+
     }
 
     public void color_debug_get_ball_color_at_1(View view) {
