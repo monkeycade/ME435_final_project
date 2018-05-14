@@ -7,10 +7,9 @@
     tools:context="edu.rose_hulman.everhadg.StateMachineCompetition">
 
     <HorizontalScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/fsm_top_button_List"
-        >
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -22,8 +21,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:textOff="Team Blue"
-                android:textOn="Team Red" />
+                android:textColor="@android:color/holo_blue_bright"
+                android:textOff="Team RED"
+                android:textOn="Team BLUE" />
+            />
 
 
             <Button
@@ -178,10 +179,9 @@
 
     <org.opencv.android.JavaCameraView
         android:id="@+id/color_blob_detection_activity_surface_view"
-        android:layout_below="@id/variableLayout"
         android:layout_width="200dp"
         android:layout_height="200dp"
-         />
+        android:layout_below="@id/variableLayout" />
 
     <Button
         android:id="@+id/missionCompleteButton"
