@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -62,6 +63,7 @@ public class StateMachineCompetition extends RobotActivity implements FieldGpsLi
     public boolean mIsRedTeam, mInSeekRange = false;
     public boolean mHasRed = true, mHasBlue = true, mHasWhite = true, mWithinRange = false;
     private TextView mCurrentStateTextView,mSubStateTextView,mGPSTextView,mTargetXYTextView,mTargetHeadingTextView,mTurnAmountTextView,mCommandTextView,mRedBallTextView,mWhiteBallTextView,mBlueBallTextView;
+    private ToggleButton mTeamToggle;
     private State mState;
     private SubState mSubState;
     private long mStateStartTime;
@@ -108,8 +110,16 @@ public class StateMachineCompetition extends RobotActivity implements FieldGpsLi
         mTurnAmountTextView = findViewById(R.id.turnAmountLabel);*/
         setState(State.READY_FOR_MISSION);
         setSubState(SubState.INACTIVE);
-        //ToggleButton teamToggle = findViewById(R.id.teamToggleButton);
-        //teamToggle.setOnCheckedChangeListener(CompoundButton buttonView,);
+        mTeamToggle = findViewById(R.id.teamToggleButton);
+        mTeamToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    mIsRedTeam = false;
+                } else {
+                    mIsRedTeam = true;
+                }
+            }
+        });
         mCurrentGpsHeading = 0;
         mCurrentGpsX = 0;
         mCurrentGpsY = 0;
