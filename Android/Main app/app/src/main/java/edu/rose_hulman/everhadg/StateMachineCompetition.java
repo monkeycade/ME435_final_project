@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.opencv.android.BaseLoaderCallback;
@@ -189,6 +192,8 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
         mCurrentGpsY = 0;
         mGpsCounter = 0;
         mCurrentHeading = 0;
+
+
     }
 
     @Override
