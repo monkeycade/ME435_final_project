@@ -22,6 +22,8 @@
 
         <include layout="@layout/ball_color_layout"/>
 
+        <include layout="@layout/imagerec_debug_layout"/>
+
     </ViewFlipper>
 
 </RelativeLayout>

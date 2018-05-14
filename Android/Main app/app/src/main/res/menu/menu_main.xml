@@ -17,4 +17,9 @@
         android:orderInCategory="100"
         android:title="Ball Color Trainer"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/toImagRecTrainner"
+        android:orderInCategory="100"
+        android:title="Image Rec Trainner"
+        app:showAsAction="never" />
 </menu>

@@ -4,149 +4,196 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    tools:context=".ConeFinderActivity">
+    tools:context="edu.rose_hulman.jins.image_recgnation_debug.ConeFinderActivity">
 
 
     <org.opencv.android.JavaCameraView
-        android:id="@+id/imagerec_debug_Java_Camera_View"
+        android:id="@+id/imagerec_debug_color_blob_detection_activity_surface_view"
         android:layout_width="match_parent"
         android:layout_height="300dp" />
 
-    <TableLayout
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
+        android:text="size"
+        android:gravity="center"
+        android:textSize="20dp"
+        android:textColor="#ffffff"
+        android:id="@+id/imagerec_debug_reading_result"/>
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_below="@+id/imagerec_debug_Java_Camera_View"
-        android:padding="5dp"
-        android:stretchColumns="2">
+        android:layout_below="@+id/imagerec_debug_color_blob_detection_activity_surface_view"
+        android:padding="5dp">
 
-        <TableRow
+        <TableLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="0dp"
+            android:stretchColumns="2">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Target" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Range" />
-
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="H:" />
-
-            <EditText
-                android:id="@+id/imagerec_debug_target_h_edittext"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:imeOptions="actionDone"
-                android:inputType="number"
-                android:text="255" />
-
-            <SeekBar
-                android:id="@+id/imagerec_debug_range_h_seekbar"
+            <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:progress="37" />
+                android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/imagerec_debug_range_h_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="50" />
-        </TableRow>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="" />
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Target" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="S:" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="" />
 
-            <EditText
-                android:id="@+id/target_s_edittext"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:imeOptions="actionDone"
-                android:inputType="number"
-                android:text="255" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Range" />
 
-            <SeekBar
-                android:id="@+id/imagerec_debug_range_s_seekbar"
+            </TableRow>
+
+            <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="48dp" />
+                android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/imagerec_debug_range_s_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="50" />
-        </TableRow>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="H:" />
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+                <EditText
+                    android:id="@+id/imagerec_debug_target_h_edittext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:imeOptions="actionDone"
+                    android:inputType="number"
+                    android:text="255" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="V:" />
+                <SeekBar
+                    android:id="@+id/imagerec_debug_range_h_seekbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:progress="37" />
 
-            <EditText
-                android:id="@+id/imagerec_debug_target_v_edittext"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:imeOptions="actionDone"
-                android:inputType="number"
-                android:text="255" />
+                <TextView
+                    android:id="@+id/imagerec_debug_range_h_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="50" />
+            </TableRow>
 
-            <SeekBar
-                android:id="@+id/imagerec_debug_range_v_seekbar"
+            <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="48dp" />
+                android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/imagerec_debug_range_v_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="50" />
-        </TableRow>
-    </TableLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="S:" />
 
+                <EditText
+                    android:id="@+id/imagerec_debug_target_s_edittext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:imeOptions="actionDone"
+                    android:inputType="number"
+                    android:text="255" />
+
+                <SeekBar
+                    android:id="@+id/imagerec_debug_range_s_seekbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp" />
+
+                <TextView
+                    android:id="@+id/imagerec_debug_range_s_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="50" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="V:" />
+
+                <EditText
+                    android:id="@+id/imagerec_debug_target_v_edittext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:imeOptions="actionDone"
+                    android:inputType="number"
+                    android:text="255" />
+
+                <SeekBar
+                    android:id="@+id/imagerec_debug_range_v_seekbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp" />
+
+                <TextView
+                    android:id="@+id/imagerec_debug_range_v_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="50" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Size:" />
+
+                <EditText
+                    android:id="@+id/imagerec_debug_size_edittext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:imeOptions="actionDone"
+                    android:inputType="number"
+                    android:text="1" />
+
+                <SeekBar
+                    android:id="@+id/imagerec_debug_size_seekbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp" />
+
+                <TextView
+                    android:id="@+id/imagerec_debug_size_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="50" />
+            </TableRow>
+        </TableLayout>
+
+
+    </ScrollView>
 
 </RelativeLayout>
