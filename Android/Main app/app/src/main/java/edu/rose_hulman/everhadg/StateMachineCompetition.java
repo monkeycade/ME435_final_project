@@ -67,6 +67,7 @@ public class StateMachineCompetition extends MainCommandBin implements FieldGpsL
         GPS_SEEKING,IMAGE_REC_SEEKING,OPTIONAL_SCRIPT, INACTIVE;
     }
 
+    
     private State mState;
     private SubState mSubState;
 
