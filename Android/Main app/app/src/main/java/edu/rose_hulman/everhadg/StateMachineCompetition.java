@@ -66,7 +66,7 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
     }
 
     public enum SubState {
-        GPS_SEEKING, IMAGE_REC_SEEKING, OPTIONAL_SCRIPT, INACTIVE;
+        GPS_SEEKING, IMAGE_REC_SEEKING, ACTION_SCRIPT, INACTIVE;
     }
 
 
@@ -359,11 +359,7 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
                         //TODO fix it
                         if (mWithinRange) {
                             mWithinRange = false;
-                            setSubState(SubState.OPTIONAL_SCRIPT);
-                        }
-                    case OPTIONAL_SCRIPT:
-                        if (getSubStateTimeMS() > 4000) {
-                            setState(State.FAR_BALL_MISSION);
+                            setSubState(SubState.ACTION_SCRIPT);
                         }
                     default:
                         break;
@@ -390,17 +386,9 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
                         seekImage();
                         if (mWithinRange) {
                             mWithinRange = false;
-                            setSubState(SubState.OPTIONAL_SCRIPT);
+                            setSubState(SubState.ACTION_SCRIPT);
                         }
                         break;
-                    case OPTIONAL_SCRIPT:
-                        if (getSubStateTimeMS() > 4000) {
-                            //mBlueBallTextView.setText("---");
-                            if (getSubStateTimeMS() > 8000) {
-                                setState(State.HOME_CONE_MISSION);
-                                //mWhiteBallTextView.setText("---");
-                            }
-                        }
                     default:
                         break;
                 }
@@ -422,10 +410,10 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
                             }
                         }
                         if (getSubStateTimeMS() > 15000) {
-                            setSubState(SubState.OPTIONAL_SCRIPT);
+                            setSubState(SubState.ACTION_SCRIPT);
                         }
                         break;
-                    case OPTIONAL_SCRIPT:
+                    case ACTION_SCRIPT:
                         if (getSubStateTimeMS() > 1000) {
                             setState(State.WAITING_FOR_PICKUP);
                         }
@@ -452,7 +440,7 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
                             setState(State.WAITING_FOR_PICKUP);
                         }
                         break;
-                    case OPTIONAL_SCRIPT:
+                    case ACTION_SCRIPT:
                         if (getSubStateTimeMS() > 1000) {
                             setState(State.WAITING_FOR_PICKUP);
                         }
@@ -563,7 +551,7 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
                 mLastHeadingError = 0;
                 mHeadingError = 0;
                 break;
-            case OPTIONAL_SCRIPT:
+            case ACTION_SCRIPT:
                 if (mState == State.NEAR_BALL_MISSION) {
                     for (int i = 0; i < 3; i++) {
                         if (containinCombo(getCombo(mIsRedTeam ? BallColorDetector.BALL_RED : BallColorDetector.BALL_BLUE), ballcolors[i].getColor())) {
@@ -628,7 +616,7 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
             double i_gain = 1;
             if (mConeSize >= mImageStopThresh) {
                 mWithinRange = true;
-                setSubState(SubState.OPTIONAL_SCRIPT);
+                setSubState(SubState.ACTION_SCRIPT);
                 sendCommand("WHEEL SPEED BRAKE 0 BRAKE 0");
             }
             if (Target < 0) {
