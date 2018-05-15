@@ -22,9 +22,11 @@ import org.opencv.imgproc.Moments;
 
 import java.util.List;
 
+import edu.rose_hulman.jins.ball_color_detector.BallColorDetector;
 import edu.rose_hulman.jins.ball_color_detector.BallColorTrainner;
 import edu.rose_hulman.jins.final_project_main.MainCommandBin;
 import edu.rose_hulman.jins.final_project_main.R;
+import edu.rose_hulman.jins.script_runing.Scripts;
 import edu.rose_hulman.me435Library.FieldGps;
 import edu.rose_hulman.me435Library.FieldGpsListener;
 import edu.rose_hulman.me435Library.FieldOrientation;
@@ -38,37 +40,36 @@ import edu.rose_hulman.me435Library.NavUtils;
 /**
  * Ball Locations:
  * You possess either a (red or green), (blue or yellow), (white or black)
- *
+ * <p>
  * For Red team locations are:
- *      Start: (15, 0)
- *      Green: (90, 50)
- *      Red:   (90,-50)
- *      White: (165+, Y)
- *      Blue:  (240, 50)
- *      Yellow:(240, -50)
- *      Home:  (0, 0);
+ * Start: (15, 0)
+ * Green: (90, 50)
+ * Red:   (90,-50)
+ * White: (165+, Y)
+ * Blue:  (240, 50)
+ * Yellow:(240, -50)
+ * Home:  (0, 0);
  * For Blue team locations are:
- *      Start: (15, 0)
- *      Yellow: (90, 50)
- *      Blue:   (90,-50)
- *      White: (165+, Y)
- *      Red:  (240, 50)
- *      Green:(240, -50)
- *      Home:  (0, 0);
- *
+ * Start: (15, 0)
+ * Yellow: (90, 50)
+ * Blue:   (90,-50)
+ * White: (165+, Y)
+ * Red:  (240, 50)
+ * Green:(240, -50)
+ * Home:  (0, 0);
  */
 
-public class StateMachineCompetition extends BallColorTrainner implements FieldGpsListener, FieldOrientationListener, CameraBridgeViewBase.CvCameraViewListener2{
+public class StateMachineCompetition extends BallColorTrainner implements FieldGpsListener, FieldOrientationListener, CameraBridgeViewBase.CvCameraViewListener2 {
 
     public enum State {
-        READY_FOR_MISSION,INITIAL_STRAIGHT,NEAR_BALL_MISSION,FAR_BALL_MISSION,HOME_CONE_MISSION,WAITING_FOR_PICKUP,SEEKING_HOME;
+        READY_FOR_MISSION, INITIAL_STRAIGHT, NEAR_BALL_MISSION, FAR_BALL_MISSION, HOME_CONE_MISSION, WAITING_FOR_PICKUP, SEEKING_HOME;
     }
 
     public enum SubState {
-        GPS_SEEKING,IMAGE_REC_SEEKING,OPTIONAL_SCRIPT, INACTIVE;
+        GPS_SEEKING, IMAGE_REC_SEEKING, OPTIONAL_SCRIPT, INACTIVE;
     }
 
-    
+
     private State mState;
     private SubState mSubState;
 
@@ -97,16 +98,15 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
     private static final double MIN_SIZE_PERCENTAGE = 0.001;
 
 
-
-    private TextView mCurrentStateTextView,mSubStateTextView,mGPSTextView,mTargetXYTextView,mTargetHeadingTextView,mTurnAmountTextView;
+    private TextView mCurrentStateTextView, mSubStateTextView, mGPSTextView, mTargetXYTextView, mTargetHeadingTextView, mTurnAmountTextView;
     private ToggleButton mTeamToggle;
     private CameraBridgeViewBase mOpenCvCameraView;
 
     /**
      * Variables for ball locations:
-     *      mNear and mFar values should be set based on the balls that the robot has
+     * mNear and mFar values should be set based on the balls that the robot has
      */
-    public int mYellowX = 240, mYellowY = -50, mGreenX = 90, mGreenY = 50, mRedX = 90, mRedY = -50,mBlueX = 240, mBlueY = 50;
+    public int mYellowX = 240, mYellowY = -50, mGreenX = 90, mGreenY = 50, mRedX = 90, mRedY = -50, mBlueX = 240, mBlueY = 50;
     public int mNearX, mNearY, mFarX, mFarY;
 
 
@@ -117,13 +117,13 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
     private long mSubStateStartTime;
 
     private int mGpsCounter = 0;
-    private double mTargetHeading,mLeftTurnAmount,mRightTurnAmount, mXTarget,mYTarget,mCurrentHeading;
+    private double mTargetHeading, mLeftTurnAmount, mRightTurnAmount, mXTarget, mYTarget, mCurrentHeading;
     private double mLeftRightCone = 0;
     private double mConeSize;
     private boolean mConeFound = false;
     private int mSeekRange = 40;
 
-    private int mLeftDutyCycle,mRightDutyCycle;
+    private int mLeftDutyCycle, mRightDutyCycle;
 
     private double mHeadingError = 0;
     private double mLastHeadingError = 0;
@@ -163,20 +163,29 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
         }
     };
 
-    protected void upDateTeamGoals(){
-        if(mIsRedTeam){
-            mYellowX = 240; mYellowY = -50;
-            mGreenX = 90;   mGreenY = 50;
-            mRedX = 90;     mRedY = -50;
-            mBlueX = 240;   mBlueY = 50;
+    protected void upDateTeamGoals() {
+        if (mIsRedTeam) {
+            mYellowX = 240;
+            mYellowY = -50;
+            mGreenX = 90;
+            mGreenY = 50;
+            mRedX = 90;
+            mRedY = -50;
+            mBlueX = 240;
+            mBlueY = 50;
         } else {
-            mYellowX = 90;  mYellowY = 50;
-            mGreenX = 240;  mGreenY = -50;
-            mRedX = 240;    mRedY = 50;
-            mBlueX = 90;    mBlueY = -50;
+            mYellowX = 90;
+            mYellowY = 50;
+            mGreenX = 240;
+            mGreenY = -50;
+            mRedX = 240;
+            mRedY = 50;
+            mBlueX = 90;
+            mBlueY = -50;
         }
     }
 
+    Scripts mScript;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -194,6 +203,7 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
         //ToggleButton teamToggle = findViewById(R.id.teamToggleButton);
         //teamToggle.setOnCheckedChangeListener(CompoundButton buttonView,);
 
+        mScript = new Scripts(this);
 
         mCurrentStateTextView = findViewById(R.id.highStateLabel);
         mSubStateTextView = findViewById(R.id.subStateLabel);
@@ -285,7 +295,7 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
         }
         gpsInfo += "   " + mGpsCounter;
         mGPSTextView.setText(gpsInfo);
-        if(distToTarget()<mSeekRange){
+        if (distToTarget() < mSeekRange) {
             mInSeekRange = true;
         } else {
             mInSeekRange = false;
@@ -293,13 +303,13 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
     }
 
     @Override
-    public void onSensorChanged(double fieldHeading, float[] orientationValues){
+    public void onSensorChanged(double fieldHeading, float[] orientationValues) {
         mCurrentSensorHeading = fieldHeading;
         mCurrentHeading = fieldHeading;
     }
 
-    private void updateTimeDisplay(){
-        if(mState == State.READY_FOR_MISSION){
+    private void updateTimeDisplay() {
+        if (mState == State.READY_FOR_MISSION) {
             mCurrentStateTextView.setText(mState.name() + "");
             mTargetHeadingTextView.setText("---");
             mTargetXYTextView.setText("---");
@@ -308,22 +318,22 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
             mCurrentStateTextView.setText(mState.name() + " " + getStateTimeMS() / 1000);
             mTargetHeadingTextView.setText("" + mTargetHeading);
         }
-        if(mSubState == SubState.INACTIVE){
+        if (mSubState == SubState.INACTIVE) {
             mSubStateTextView.setText("---");
         } else {
             mSubStateTextView.setText(mSubState.name() + " " + getSubStateTimeMS() / 1000);
         }
-        if(mSubState != SubState.GPS_SEEKING){
+        if (mSubState != SubState.GPS_SEEKING) {
             mTargetHeadingTextView.setText("---");
             mTurnAmountTextView.setText("---");
         }
     }
 
     @Override
-    public void loop(){
+    public void loop() {
         super.loop();
         updateTimeDisplay();
-        switch (mState){
+        switch (mState) {
             case INITIAL_STRAIGHT:
                 if (getStateTimeMS() > 4000) {
                     setState(State.NEAR_BALL_MISSION);
@@ -333,21 +343,21 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
                 mTargetXYTextView.setText("" + getString(R.string.xy_format, mNearX, mNearY));
                 switch (mSubState) {
                     case GPS_SEEKING:
-                        seekTargetAt(mNearX,mNearY);
-                        if (NavUtils.targetIsOnLeft(mCurrentGpsX,mCurrentGpsY,mCurrentGpsHeading,mXTarget,mYTarget)) {
+                        seekTargetAt(mNearX, mNearY);
+                        if (NavUtils.targetIsOnLeft(mCurrentGpsX, mCurrentGpsY, mCurrentGpsHeading, mXTarget, mYTarget)) {
                             mTurnAmountTextView.setText("Left " + getString(R.string.degrees_format, mLeftTurnAmount));
                         } else {
                             mTurnAmountTextView.setText("Right " + getString(R.string.degrees_format, mRightTurnAmount));
                         }
                         mTargetHeadingTextView.setText("" + getString(R.string.degrees_format, mTargetHeading));
-                        if(distToTarget()< mSeekRange && mConeFound){
+                        if (distToTarget() < mSeekRange && mConeFound) {
                             setSubState(SubState.IMAGE_REC_SEEKING);
                         }
                         break;
                     case IMAGE_REC_SEEKING:
                         seekImage();
                         //TODO fix it
-                        if(mWithinRange){
+                        if (mWithinRange) {
                             mWithinRange = false;
                             setSubState(SubState.OPTIONAL_SCRIPT);
                         }
@@ -363,22 +373,22 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
                 mTargetXYTextView.setText("" + getString(R.string.xy_format, mFarX, mFarY));
                 switch (mSubState) {
                     case GPS_SEEKING:
-                        seekTargetAt(mFarX,mFarY);
-                        if (NavUtils.targetIsOnLeft(mCurrentGpsX,mCurrentGpsY,mCurrentGpsHeading,mXTarget,mYTarget)) {
+                        seekTargetAt(mFarX, mFarY);
+                        if (NavUtils.targetIsOnLeft(mCurrentGpsX, mCurrentGpsY, mCurrentGpsHeading, mXTarget, mYTarget)) {
                             mTurnAmountTextView.setText("Left " + getString(R.string.degrees_format, mLeftTurnAmount));
                         } else {
                             mTurnAmountTextView.setText("Right " + getString(R.string.degrees_format, mLeftTurnAmount));
                         }
                         mTargetHeadingTextView.setText("" + getString(R.string.degrees_format, mTargetHeading));
-                        if(mConeFound && mWithinRange){
-                            if(mConeSize>MIN_SIZE_PERCENTAGE){
+                        if (mConeFound && mWithinRange) {
+                            if (mConeSize > MIN_SIZE_PERCENTAGE) {
                                 setSubState(SubState.IMAGE_REC_SEEKING);
                             }
                         }
                         break;
                     case IMAGE_REC_SEEKING:
                         seekImage();
-                        if(mWithinRange){
+                        if (mWithinRange) {
                             mWithinRange = false;
                             setSubState(SubState.OPTIONAL_SCRIPT);
                         }
@@ -386,7 +396,7 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
                     case OPTIONAL_SCRIPT:
                         if (getSubStateTimeMS() > 4000) {
                             //mBlueBallTextView.setText("---");
-                            if (getSubStateTimeMS() > 8000){
+                            if (getSubStateTimeMS() > 8000) {
                                 setState(State.HOME_CONE_MISSION);
                                 //mWhiteBallTextView.setText("---");
                             }
@@ -399,15 +409,15 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
                 mTargetXYTextView.setText("" + getString(R.string.xy_format, 0, 0));
                 switch (mSubState) {
                     case GPS_SEEKING:
-                        seekTargetAt(0,0);
-                        if (NavUtils.targetIsOnLeft(mCurrentGpsX,mCurrentGpsY,mCurrentGpsHeading,mXTarget,mYTarget)) {
+                        seekTargetAt(0, 0);
+                        if (NavUtils.targetIsOnLeft(mCurrentGpsX, mCurrentGpsY, mCurrentGpsHeading, mXTarget, mYTarget)) {
                             mTurnAmountTextView.setText("Left " + getString(R.string.degrees_format, mLeftTurnAmount));
                         } else {
                             mTurnAmountTextView.setText("Right " + getString(R.string.degrees_format, mLeftTurnAmount));
                         }
                         mTargetHeadingTextView.setText("" + getString(R.string.degrees_format, mTargetHeading));
-                        if(mConeFound && mWithinRange){
-                            if(mConeSize>MIN_SIZE_PERCENTAGE){
+                        if (mConeFound && mWithinRange) {
+                            if (mConeSize > MIN_SIZE_PERCENTAGE) {
                                 setSubState(SubState.IMAGE_REC_SEEKING);
                             }
                         }
@@ -431,8 +441,8 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
             case SEEKING_HOME:
                 switch (mSubState) {
                     case GPS_SEEKING:
-                        seekTargetAt(0,0);
-                        if (NavUtils.targetIsOnLeft(mCurrentGpsX,mCurrentGpsY,mCurrentGpsHeading,mXTarget,mYTarget)) {
+                        seekTargetAt(0, 0);
+                        if (NavUtils.targetIsOnLeft(mCurrentGpsX, mCurrentGpsY, mCurrentGpsHeading, mXTarget, mYTarget)) {
                             mTurnAmountTextView.setText("Left " + getString(R.string.degrees_format, mLeftTurnAmount));
                         } else {
                             mTurnAmountTextView.setText("Right " + getString(R.string.degrees_format, mLeftTurnAmount));
@@ -451,6 +461,52 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
                 }
             default:
                 break;
+        }
+    }
+
+    public void checkColor() {
+        identifyColor();
+        for (int i = 0; i < 3; i++) {
+            if (containinCombo(getCombo(BallColorDetector.BALL_RED), ballcolors[i].getColor())) {
+                if (ballcolors[i].getColor() == BallColorDetector.BALL_GREEN) {
+                    if (mIsRedTeam) {
+                        mNearX = mGreenX;
+                        mNearY = mGreenY;
+                    } else {
+                        mFarX = mGreenX;
+                        mFarY = mGreenY;
+                    }
+                } else {
+                    if (mIsRedTeam) {
+                        mNearX = mRedX;
+                        mNearY = mRedY;
+                    } else {
+                        mFarX = mRedX;
+                        mFarY = mRedY;
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < 3; i++) {
+            if (containinCombo(getCombo(BallColorDetector.BALL_BLUE), ballcolors[i].getColor())) {
+                if (ballcolors[i].getColor() == BallColorDetector.BALL_YELLOW) {
+                    if (!mIsRedTeam) {
+                        mNearX = mYellowX;
+                        mNearY = mYellowY;
+                    } else {
+                        mFarX = mYellowX;
+                        mFarY = mYellowY;
+                    }
+                } else {
+                    if (!mIsRedTeam) {
+                        mNearX = mBlueX;
+                        mNearY = mBlueY;
+                    } else {
+                        mFarX = mBlueX;
+                        mFarY = mBlueY;
+                    }
+                }
+            }
         }
     }
 
@@ -492,7 +548,7 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
         mState = newState;
     }
 
-    private void setSubState(SubState newSubState){
+    private void setSubState(SubState newSubState) {
         // Write down the current time
         mSubStateStartTime = System.currentTimeMillis();
 
@@ -508,6 +564,20 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
                 mHeadingError = 0;
                 break;
             case OPTIONAL_SCRIPT:
+                if (mState == State.NEAR_BALL_MISSION) {
+                    for (int i = 0; i < 3; i++) {
+                        if (containinCombo(getCombo(mIsRedTeam ? BallColorDetector.BALL_RED : BallColorDetector.BALL_BLUE), ballcolors[i].getColor())) {
+                            mScript.runScript(i == 0 ? "right_ball_script" : (i == 1 ? "middle_ball_script" : "left_ball_script"));
+                        }
+                    }
+                }
+                if (mState == State.FAR_BALL_MISSION) {
+                    for (int i = 0; i < 3; i++) {
+                        if (containinCombo(getCombo(!mIsRedTeam ? BallColorDetector.BALL_RED : BallColorDetector.BALL_BLUE), ballcolors[i].getColor())) {
+                            mScript.runScript(i == 0 ? "right_ball_script" : (i == 1 ? "middle_ball_script" : "left_ball_script"));
+                        }
+                    }
+                }
                 break;
             case INACTIVE:
                 break;
@@ -515,17 +585,40 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
         mSubState = newSubState;
     }
 
-    private boolean seeSomething(){
+    @Override
+    public void onScricptsComplete() {
+        super.onScricptsComplete();
+        if (mState == State.NEAR_BALL_MISSION) {
+            setState(State.FAR_BALL_MISSION);
+        }
+        if (mState == State.FAR_BALL_MISSION) {
+            boolean findwhite = false;
+            for (int i = 0; i < 3; i++) {
+                if (containinCombo(getCombo(BallColorDetector.BALL_WHITE), ballcolors[i].getColor())) {
+                    if (ballcolors[i].getColor() == BallColorDetector.BALL_WHITE) {
+                        findwhite = true;
+                        mScript.runScript(i == 0 ? "right_ball_script" : (i == 1 ? "middle_ball_script" : "left_ball_script"));
+                        ballcolors[i].next();
+                    }
+                }
+            }
+            if(!findwhite){
+                setState(State.HOME_CONE_MISSION);
+            }
+        }
+    }
+
+    private boolean seeSomething() {
         // TODO implement this
         return false;
     }
 
-    private boolean closeEnough(){
+    private boolean closeEnough() {
         return false;
     }
 
-    private void seekImage(){
-        if(mConeFound) {
+    private void seekImage() {
+        if (mConeFound) {
             double Target = mLeftRightCone;
             int slowDown = 40;
             mLeftDutyCycle = LEFT_PWM_VALUE_FOR_STRAIGHT - slowDown;
@@ -590,14 +683,14 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
         double i_gain = .05;
 
 
-        if(NavUtils.targetIsOnLeft(mCurrentGpsX,mCurrentGpsY,mCurrentHeading,xTarget,yTarget)){//if (mLeftTurnAmount < mRightTurnAmount) {
+        if (NavUtils.targetIsOnLeft(mCurrentGpsX, mCurrentGpsY, mCurrentHeading, xTarget, yTarget)) {//if (mLeftTurnAmount < mRightTurnAmount) {
             mLastHeadingError = mHeadingError;
             mHeadingError = mLeftTurnAmount;
             mSumHeadingError += mHeadingError;
 
-            mLeftTurnAmount = p_gain*mHeadingError + d_gain*(mHeadingError-mLastHeadingError) + (i_gain*mSumHeadingError/getSubStateTimeMS());
-            mLeftDutyCycle = LEFT_PWM_VALUE_FOR_STRAIGHT - (int)mLeftTurnAmount; // Using a VERY simple plan. :)
-            if(mLeftDutyCycle>LEFT_PWM_VALUE_FOR_STRAIGHT){
+            mLeftTurnAmount = p_gain * mHeadingError + d_gain * (mHeadingError - mLastHeadingError) + (i_gain * mSumHeadingError / getSubStateTimeMS());
+            mLeftDutyCycle = LEFT_PWM_VALUE_FOR_STRAIGHT - (int) mLeftTurnAmount; // Using a VERY simple plan. :)
+            if (mLeftDutyCycle > LEFT_PWM_VALUE_FOR_STRAIGHT) {
                 mLeftDutyCycle = LEFT_PWM_VALUE_FOR_STRAIGHT;
             }
             mLeftDutyCycle = Math.max(mLeftDutyCycle, LOWEST_DESIRABLE_DUTY_CYCLE);
@@ -606,9 +699,9 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
             mHeadingError = mRightTurnAmount;
             mSumHeadingError += mHeadingError;
 
-            mRightTurnAmount = p_gain*mHeadingError + d_gain*(mHeadingError-mLastHeadingError) + (i_gain*mSumHeadingError/getSubStateTimeMS());
-            mRightDutyCycle = RIGHT_PWM_VALUE_FOR_STRAIGHT - (int)mRightTurnAmount; // Could also scale it.
-            if(mRightDutyCycle>RIGHT_PWM_VALUE_FOR_STRAIGHT){
+            mRightTurnAmount = p_gain * mHeadingError + d_gain * (mHeadingError - mLastHeadingError) + (i_gain * mSumHeadingError / getSubStateTimeMS());
+            mRightDutyCycle = RIGHT_PWM_VALUE_FOR_STRAIGHT - (int) mRightTurnAmount; // Could also scale it.
+            if (mRightDutyCycle > RIGHT_PWM_VALUE_FOR_STRAIGHT) {
                 mRightDutyCycle = RIGHT_PWM_VALUE_FOR_STRAIGHT;
             }
 
@@ -619,10 +712,10 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
         sendCommand("WHEEL SPEED FORWARD " + mRightDutyCycle + " FORWARD " + mLeftDutyCycle);
     }
 
-    public double distToTarget(){
+    public double distToTarget() {
         double xDist = mXTarget - mCurrentGpsX;
         double yDist = mYTarget - mCurrentGpsY;
-        double number = Math.sqrt((xDist*xDist)+(yDist*yDist));
+        double number = Math.sqrt((xDist * xDist) + (yDist * yDist));
         return number;
     }
 
@@ -684,7 +777,8 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
     /**
      * Displays the blob target info in the text views.
      */
-    public void onImageRecComplete(boolean coneFound, double leftRightLocation, double topBottomLocation, double sizePercentage) {
+    public void onImageRecComplete(boolean coneFound, double leftRightLocation,
+                                   double topBottomLocation, double sizePercentage) {
         mConeFound = coneFound;
         if (coneFound) {
             mLeftRightCone = leftRightLocation;
@@ -765,7 +859,8 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
      * @param coneResult        Array that will be populated with the results of this math.
      * @return True if a cone is found, False if no cone is found.
      */
-    private boolean findCone(List<MatOfPoint> contours, double minSizePercentage, double[] coneResult) {
+    private boolean findCone(List<MatOfPoint> contours, double minSizePercentage,
+                             double[] coneResult) {
         // Step #0: Determine if any contour regions were found that match the target color criteria.
         if (contours.size() == 0) {
             return false; // No contours found.
@@ -809,8 +904,7 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
         return true;
     }
 
-    public Moments contourMoments( MatOfPoint contour )
-    {
+    public Moments contourMoments(MatOfPoint contour) {
         Moments m = new Moments();
         int lpt = contour.checkVector(2);
         boolean is_float = true;//(contour.depth() == CvType.CV_32F);
@@ -819,7 +913,7 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
 
         //CV_Assert( contour.depth() == CV_32S || contour.depth() == CV_32F );
 
-        if( lpt == 0 )
+        if (lpt == 0)
             return m;
 
         double a00 = 0, a10 = 0, a01 = 0, a20 = 0, a11 = 0, a02 = 0, a30 = 0, a21 = 0, a12 = 0, a03 = 0;
@@ -827,15 +921,14 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
 
 
         {
-            xi_1 = ptsi[lpt-1].x;
-            yi_1 = ptsi[lpt-1].y;
+            xi_1 = ptsi[lpt - 1].x;
+            yi_1 = ptsi[lpt - 1].y;
         }
 
         xi_12 = xi_1 * xi_1;
         yi_12 = yi_1 * yi_1;
 
-        for( int i = 0; i < lpt; i++ )
-        {
+        for (int i = 0; i < lpt; i++) {
 
             {
                 xi = ptsi[i].x;
@@ -866,21 +959,17 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
             yi_12 = yi2;
         }
         float FLT_EPSILON = 1.19209e-07f;
-        if( Math.abs(a00) > FLT_EPSILON )
-        {
+        if (Math.abs(a00) > FLT_EPSILON) {
             double db1_2, db1_6, db1_12, db1_24, db1_20, db1_60;
 
-            if( a00 > 0 )
-            {
+            if (a00 > 0) {
                 db1_2 = 0.5;
                 db1_6 = 0.16666666666666666666666666666667;
                 db1_12 = 0.083333333333333333333333333333333;
                 db1_24 = 0.041666666666666666666666666666667;
                 db1_20 = 0.05;
                 db1_60 = 0.016666666666666666666666666666667;
-            }
-            else
-            {
+            } else {
                 db1_2 = -0.5;
                 db1_6 = -0.16666666666666666666666666666667;
                 db1_12 = -0.083333333333333333333333333333333;

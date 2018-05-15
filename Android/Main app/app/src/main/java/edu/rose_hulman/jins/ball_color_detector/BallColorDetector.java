@@ -20,13 +20,13 @@ public class BallColorDetector {
     private final static double TOLERANCE = 0.0001;
 
 
-    protected final static int BALL_NONE = -1;
-    protected final static int BALL_BLACK = 0;
-    protected final static int BALL_BLUE = 1;
-    protected final static int BALL_GREEN = 2;
-    protected final static int BALL_RED = 3;
-    protected final static int BALL_YELLOW = 4;
-    protected final static int BALL_WHITE = 5;
+    public final static int BALL_NONE = -1;
+    public final static int BALL_BLACK = 0;
+    public final static int BALL_BLUE = 1;
+    public final static int BALL_GREEN = 2;
+    public final static int BALL_RED = 3;
+    public final static int BALL_YELLOW = 4;
+    public final static int BALL_WHITE = 5;
 
     //[ball,R,G,B,WHITE,OFF]
     private List<Instance> ballColorData;
@@ -142,7 +142,7 @@ public class BallColorDetector {
         return toReturn;
     }
 
-    protected class BallResult implements Comparable<BallResult>{
+    public class BallResult implements Comparable<BallResult>{
         private PriorityQueue<Ball> results;
         protected int[] reading;
 

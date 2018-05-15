@@ -30,7 +30,7 @@ public class BallColorTrainner extends ConeFinderActivity {
     private static final int[] BALL_DRAWABLE_RESOURCES = new int[]{R.drawable.none_ball, R.drawable.black_ball,
             R.drawable.blue_ball, R.drawable.green_ball, R.drawable.red_ball, R.drawable.yellow_ball, R.drawable.white_ball};
 
-    private BallColorDetector.BallResult[] ballcolors;
+    public BallColorDetector.BallResult[] ballcolors;
 
     private BallColorDetector[] ballHandlers;
     private ImageButton[] mBallImageButtons;
@@ -152,7 +152,7 @@ public class BallColorTrainner extends ConeFinderActivity {
 
     }
 
-    private boolean containinCombo(int[] combo, int color) {
+    public boolean containinCombo(int[] combo, int color) {
         for (int i = 0; i < combo.length; i++) {
             if (combo[i] == color) {
                 return true;
@@ -161,7 +161,7 @@ public class BallColorTrainner extends ConeFinderActivity {
         return false;
     }
 
-    private int[] getCombo(int color) {
+    public int[] getCombo(int color) {
         switch (color) {
             case 0:
                 return new int[]{0, 5};
