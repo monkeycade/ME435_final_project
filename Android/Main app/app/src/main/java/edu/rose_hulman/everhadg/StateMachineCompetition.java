@@ -139,10 +139,6 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
     private double mCameraViewHeight;
     private double mCameraViewArea;
 
-    /**
-     * References to the UI widgets used in this demo app.
-     */
-    private TextView mLeftRightLocationTextView, mTopBottomLocationTextView, mSizePercentageTextView;
 
     /**
      * Constants and variables used by OpenCV4Android. Don't mess with these. ;)
@@ -516,12 +512,15 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
                 sendCommand("WHEEL SPEED FORWARD 250 FORWARD 250");
                 break;
             case NEAR_BALL_MISSION:
+                speak("Near Ball Mission");
                 setSubState(SubState.GPS_SEEKING);
                 break;
             case FAR_BALL_MISSION:
+                speak("Far Ball Mission");
                 setSubState(SubState.GPS_SEEKING);
                 break;
             case HOME_CONE_MISSION:
+                speak("Home Cone Mission");
                 setSubState(SubState.GPS_SEEKING);
                 break;
             case WAITING_FOR_PICKUP:
