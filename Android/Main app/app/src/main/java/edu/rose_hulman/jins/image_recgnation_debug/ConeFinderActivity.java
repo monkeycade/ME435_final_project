@@ -1,12 +1,6 @@
 package edu.rose_hulman.jins.image_recgnation_debug;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,7 +9,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.ViewFlipper;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -34,10 +27,8 @@ import org.opencv.imgproc.Moments;
 import java.util.List;
 
 import edu.rose_hulman.everhadg.ColorBlobDetector;
-import edu.rose_hulman.jins.final_project_main.MainActivity;
 import edu.rose_hulman.jins.final_project_main.MainCommandBin;
 import edu.rose_hulman.jins.final_project_main.R;
-import edu.rose_hulman.jins.fsm_main.FSM_System;
 
 public class ConeFinderActivity extends MainCommandBin implements CameraBridgeViewBase.CvCameraViewListener2, View.OnTouchListener {
 
@@ -134,7 +125,7 @@ public class ConeFinderActivity extends MainCommandBin implements CameraBridgeVi
 
         mRangeHSeekBar.setMax(255);
         mRangeSSeekBar.setMax(255);
-        mSizeSeekBar.setMax(10000);
+        mSizeSeekBar.setMax(1000);
 
         updateUiWidgetsFromParameters();
 
@@ -171,7 +162,7 @@ public class ConeFinderActivity extends MainCommandBin implements CameraBridgeVi
         mRangeHSeekBar.setOnSeekBarChangeListener(seekBarChangeListener);
         mRangeSSeekBar.setOnSeekBarChangeListener(seekBarChangeListener);
         mRangeVSeekBar.setOnSeekBarChangeListener(seekBarChangeListener);
-
+        mSizeSeekBar.setOnSeekBarChangeListener(seekBarChangeListener);
 //    onImageRecComplete(true, -0.123, 0.456, 0.789);
     }
 
@@ -203,9 +194,9 @@ public class ConeFinderActivity extends MainCommandBin implements CameraBridgeVi
         mConeRangeH = mRangeHSeekBar.getProgress();
         mConeRangeS = mRangeSSeekBar.getProgress();
         mConeRangeV = mRangeVSeekBar.getProgress();
-        min_size_percentage = mSizeSeekBar.getProgress() / 10000.0;
+        min_size_percentage = mSizeSeekBar.getProgress() / 1000.0;
         applyHsvTargetHsvRangeValues();
-        system_print("" + min_size_percentage);
+        system_print("siz: " + min_size_percentage);
         mRangeHTextView.setText("" + mConeRangeH);
         mRangeSTextView.setText("" + mConeRangeS);
         mRangeVTextView.setText("" + mConeRangeV);

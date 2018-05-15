@@ -9,12 +9,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.PriorityQueue;
 
-import edu.rose_hulman.everhadg.StateMachineCompetition;
-import edu.rose_hulman.everhadg.TempSubFSMTemp;
 import edu.rose_hulman.jins.final_project_main.R;
 import edu.rose_hulman.jins.image_recgnation_debug.ConeFinderActivity;
 

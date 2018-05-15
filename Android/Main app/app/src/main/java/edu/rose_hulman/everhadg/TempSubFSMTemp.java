@@ -11,15 +11,15 @@ import android.widget.TextView;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import edu.rose_hulman.jins.final_project_main.MainActivity;
 import edu.rose_hulman.jins.final_project_main.R;
-import edu.rose_hulman.jins.fsm_main.FSM_System;
 import edu.rose_hulman.me435Library.FieldGps;
 import edu.rose_hulman.me435Library.FieldGpsListener;
 import edu.rose_hulman.me435Library.FieldOrientation;
 import edu.rose_hulman.me435Library.FieldOrientationListener;
 import edu.rose_hulman.me435Library.NavUtils;
 
-public class TempSubFSMTemp extends FSM_System implements FieldGpsListener, FieldOrientationListener {
+public class TempSubFSMTemp extends MainActivity implements FieldGpsListener, FieldOrientationListener {
 
     /*public enum State {
         READY_FOR_MISSION,INITIAL_STRAIGHT,NEAR_BALL_MISSION,FAR_BALL_MISSION,HOME_CONE_MISSION,WAITING_FOR_PICKUP,SEEKING_HOME;
@@ -74,7 +74,7 @@ public class TempSubFSMTemp extends FSM_System implements FieldGpsListener, Fiel
          */
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        mFieldGps = new FieldGps(this);
+        mFieldGps = null;
         mFieldOrientation = new FieldOrientation(this);
 
         mGpsCounter = 0;
@@ -373,14 +373,13 @@ public class TempSubFSMTemp extends FSM_System implements FieldGpsListener, Fiel
          * Cade's Ultimate Secret move that teleports golf balls
          */
         sendCommand("WHEEL SPEED BRAKE 0 BRAKE 0");
-        handleFakeGpsF0(null);
     }
 
     // TODO Need buttons to set the origin of the robot's location
     public void handleSetOrigin(View view){
-        mFieldGps.setCurrentLocationAsOrigin();
+//        mFieldGps.setCurrentLocationAsOrigin();
     }
-    public void handleSetXAxis(View view){
-        mFieldGps.setCurrentLocationAsLocationOnXAxis();
-    }
+//    public void handleSetXAxis(View view){
+//        mFieldGps.setCurrentLocationAsLocationOnXAxis();
+//    }
 }

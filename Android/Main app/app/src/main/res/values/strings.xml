@@ -32,6 +32,6 @@
     <string name="wheel_current_request">WHEEL CURRENT REQUEST</string>
 
     <string name="degrees_format">%1$.0fº</string>
-    <string name="xy_format">(%1$d,%2$d)</string>
+    <string name="xy_format">(%1$.0f,%2$.0f)</string>
     <string name="time_format">%1$d:%2$02d</string>
 </resources>

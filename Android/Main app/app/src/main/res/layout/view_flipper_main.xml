@@ -16,8 +16,6 @@
 
         <include layout="@layout/start_screen"/>
 
-        <include layout="@layout/fsm_main"/>
-
         <include layout="@layout/activity_state_machine_competition"/>
 
         <include layout="@layout/ball_color_layout"/>

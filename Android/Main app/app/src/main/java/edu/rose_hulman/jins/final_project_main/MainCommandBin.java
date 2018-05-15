@@ -101,15 +101,15 @@ public class MainCommandBin extends RobotActivity {
                 system_print("Flip to Main Activity");
                 break;
             case R.id.toFSM:
-                mViewControl.setDisplayedChild(2);
+                mViewControl.setDisplayedChild(1);
                 system_print("Flip to FSM");
                 break;
             case R.id.toBallColorTrainner:
-                mViewControl.setDisplayedChild(3);
+                mViewControl.setDisplayedChild(2);
                 system_print("Flip to Ball Color Trainer");
                 break;
             case R.id.toImagRecTrainner:
-                mViewControl.setDisplayedChild(4);
+                mViewControl.setDisplayedChild(3);
                 system_print("Flip to Image Rec Trainer");
                 break;
             default:

@@ -131,7 +131,7 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
 
     //private double mDetectionThresh = 0.01;
     private double mImageStopThresh = 0.07;
-
+    private Location mLastLocation;
     /**
      * Screen size variables.
      */
@@ -192,7 +192,7 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
         super.onCreate(savedInstanceState);
 
         mFieldOrientation = new FieldOrientation(this);
-        mFieldGps = new FieldGps(this);
+        mFieldGps = new FieldGps(this,mStorage);
 
         setState(State.READY_FOR_MISSION);
         setSubState(SubState.INACTIVE);
@@ -212,10 +212,6 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
         mTargetHeadingTextView = findViewById(R.id.headingLabel);
         mTurnAmountTextView = findViewById(R.id.turnAmountLabel);
 
-        setState(State.READY_FOR_MISSION);
-        setSubState(SubState.INACTIVE);
-        mFieldOrientation = new FieldOrientation(this);
-        mFieldGps = new FieldGps(this);
         mTeamToggle = findViewById(R.id.teamToggleButton);
         mTeamToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -236,7 +232,7 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
         mCurrentGpsY = 0;
         mGpsCounter = 0;
         mCurrentHeading = 0;
-
+        mLastLocation = null;
 
     }
 
@@ -282,6 +278,7 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
         mCurrentGpsX = x;
         mCurrentGpsY = y;
         mCurrentGpsHeading = heading;
+        mLastLocation = location;
         String gpsInfo = getString(R.string.xy_format, x, y);
         if (heading <= 180.0 && heading > -180.0) {
             gpsInfo += " " + getString(R.string.degrees_format, heading);
@@ -340,7 +337,7 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
                 }
                 break;
             case NEAR_BALL_MISSION:
-                mTargetXYTextView.setText("" + getString(R.string.xy_format, mNearX, mNearY));
+                mTargetXYTextView.setText("" + getString(R.string.xy_format, (double) mNearX, (double) mNearY));
                 switch (mSubState) {
                     case GPS_SEEKING:
                         seekTargetAt(mNearX, mNearY);
@@ -366,7 +363,7 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
                 }
                 break;
             case FAR_BALL_MISSION:
-                mTargetXYTextView.setText("" + getString(R.string.xy_format, mFarX, mFarY));
+                mTargetXYTextView.setText("" + getString(R.string.xy_format, (double) mFarX, (double) mFarY));
                 switch (mSubState) {
                     case GPS_SEEKING:
                         seekTargetAt(mFarX, mFarY);
@@ -394,7 +391,7 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
                 }
                 break;
             case HOME_CONE_MISSION:
-                mTargetXYTextView.setText("" + getString(R.string.xy_format, 0, 0));
+                mTargetXYTextView.setText("" + getString(R.string.xy_format, 0.0, 0.0));
                 switch (mSubState) {
                     case GPS_SEEKING:
                         seekTargetAt(0, 0);
@@ -452,7 +449,7 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
         }
     }
 
-    public void checkColor() {
+    public void checkColor(View view) {
         identifyColor();
         for (int i = 0; i < 3; i++) {
             if (containinCombo(getCombo(BallColorDetector.BALL_RED), ballcolors[i].getColor())) {
@@ -516,6 +513,7 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
                 setSubState(SubState.INACTIVE);
                 break;
             case INITIAL_STRAIGHT:
+                sendCommand("WHEEL SPEED FORWARD 250 FORWARD 250");
                 break;
             case NEAR_BALL_MISSION:
                 setSubState(SubState.GPS_SEEKING);
@@ -590,7 +588,7 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
                     }
                 }
             }
-            if(!findwhite){
+            if (!findwhite) {
                 setState(State.HOME_CONE_MISSION);
             }
         }
@@ -721,6 +719,7 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
         mHeadingError = 0;
         mLastHeadingError = 0;
         mSumHeadingError = 0;
+        sendCommand("WHEEL SPEED BRAKE 0 BRAKE 0");
         mTeamToggle.setChecked(false);
     }
 
@@ -731,23 +730,23 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
         }
     }
 
-    /*public void notSeen(View view) {
-        if (mSubState == SubState.IMAGE_REC_SEEKING) {
-            setSubState(SubState.GPS_SEEKING);
-        }
-    }
-
-    public void seenSmall(View view) {
-        if (mSubState == SubState.GPS_SEEKING) {
-            setSubState(SubState.IMAGE_REC_SEEKING);
-        }
-    }
-
-    public void seenBig(View view) {
-        if (mSubState == SubState.IMAGE_REC_SEEKING) {
-            setSubState(SubState.OPTIONAL_SCRIPT);
-        }
-    }
+//    public void notSeen(View view) {
+//        if (mSubState == SubState.IMAGE_REC_SEEKING) {
+//            setSubState(SubState.GPS_SEEKING);
+//        }
+//    }
+//
+//    public void seenSmall(View view) {
+//        if (mSubState == SubState.GPS_SEEKING) {
+//            setSubState(SubState.IMAGE_REC_SEEKING);
+//        }
+//    }
+//
+//    public void seenBig(View view) {
+//        if (mSubState == SubState.IMAGE_REC_SEEKING) {
+//            setSubState(SubState.OPTIONAL_SCRIPT);
+//        }
+//    }
 
     public void missionComplete(View view) {
         if (mState == State.WAITING_FOR_PICKUP) {
@@ -755,11 +754,12 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
         }
     }
 
-    public void handleSetOrigin(View view){
-        mFieldGps.setCurrentLocationAsOrigin();
+    public void handleSetOrigin(View view) {
+        mFieldGps.setCurrentLocationAsOrigin(mStorage);
     }
-    public void handleSetXAxis(View view){
-        mFieldGps.setCurrentLocationAsLocationOnXAxis();
+
+    public void handleSetXAxis(View view) {
+        mFieldGps.setCurrentLocationAsLocationOnXAxis(mStorage);
     }
 
     /**
@@ -786,6 +786,7 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
 
     @Override
     public void onCameraViewStarted(int width, int height) {
+        super.onCameraViewStarted(width,height);
         mDetector = new ColorBlobDetector();
         Scalar targetColorHsv = new Scalar(255);
         targetColorHsv.val[0] = TARGET_COLOR_HUE;
