@@ -186,12 +186,6 @@
             android:textSize="20dp" />
     </LinearLayout>
 
-    <org.opencv.android.JavaCameraView
-        android:id="@+id/color_blob_detection_activity_surface_view"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_below="@id/variableLayout" />
-
     <Button
         android:id="@+id/missionCompleteButton"
         android:layout_width="match_parent"

@@ -125,7 +125,7 @@ public class ConeFinderActivity extends MainCommandBin implements CameraBridgeVi
 
         mRangeHSeekBar.setMax(255);
         mRangeSSeekBar.setMax(255);
-        mSizeSeekBar.setMax(1000);
+        mSizeSeekBar.setMax(300);
 
         updateUiWidgetsFromParameters();
 
@@ -194,13 +194,12 @@ public class ConeFinderActivity extends MainCommandBin implements CameraBridgeVi
         mConeRangeH = mRangeHSeekBar.getProgress();
         mConeRangeS = mRangeSSeekBar.getProgress();
         mConeRangeV = mRangeVSeekBar.getProgress();
-        min_size_percentage = mSizeSeekBar.getProgress() / 1000.0;
+        min_size_percentage = mSizeSeekBar.getProgress() / 10000.0;
         applyHsvTargetHsvRangeValues();
-        system_print("siz: " + min_size_percentage);
         mRangeHTextView.setText("" + mConeRangeH);
         mRangeSTextView.setText("" + mConeRangeS);
         mRangeVTextView.setText("" + mConeRangeV);
-        mResultTextView.setText("" + min_size_percentage);
+        mSizeTextView.setText("" + Math.round(min_size_percentage * 1000) / 10);
     }
 
     protected void applyHsvTargetHsvRangeValues() {
@@ -231,7 +230,7 @@ public class ConeFinderActivity extends MainCommandBin implements CameraBridgeVi
         mRangeHTextView.setText("" + mConeRangeH);
         mRangeSTextView.setText("" + mConeRangeS);
         mRangeVTextView.setText("" + mConeRangeV);
-        mResultTextView.setText("" + min_size_percentage);
+        mSizeTextView.setText("" + Math.round(min_size_percentage * 1000) / 10);
     }
 
 
@@ -286,6 +285,7 @@ public class ConeFinderActivity extends MainCommandBin implements CameraBridgeVi
 
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
+
         mRgba = inputFrame.rgba();
         mDetector.process(mRgba);
 
@@ -322,7 +322,7 @@ public class ConeFinderActivity extends MainCommandBin implements CameraBridgeVi
      * @param coneResult        Array that will be populated with the results of this math.
      * @return True if a cone is found, False if no cone is found.
      */
-    private boolean findCone(List<MatOfPoint> contours, double minSizePercentage, double[] coneResult) {
+    public boolean findCone(List<MatOfPoint> contours, double minSizePercentage, double[] coneResult) {
         // Step #0: Determine if any contour regions were found that match the target color criteria.
         if (contours.size() == 0) {
             return false; // No contours found.
@@ -458,7 +458,7 @@ public class ConeFinderActivity extends MainCommandBin implements CameraBridgeVi
     }
 
     public boolean onTouch(View v, MotionEvent event) {
-        if (mViewControl.getDisplayedChild() != 4) {
+        if (mViewControl.getDisplayedChild() != 3) {
             system_print("Don't listen for touch events if the camera is not visible.");
             return false;
         }
