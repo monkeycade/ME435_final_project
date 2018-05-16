@@ -137,8 +137,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="---"
-            android:textSize="20dp" />
+            android:text="---"/>
 
         <TextView
             android:id="@+id/subStateLabel"
@@ -146,8 +145,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="---"
-            android:textSize="20dp" />
+            android:text="---" />
 
         <TextView
             android:id="@+id/gpsLabel"
@@ -155,8 +153,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="---"
-            android:textSize="20dp" />
+            android:text="---" />
 
         <TextView
             android:id="@+id/targetXYLabel"
@@ -164,8 +161,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="---"
-            android:textSize="20dp" />
+            android:text="---"/>
 
         <TextView
             android:id="@+id/headingLabel"
@@ -173,8 +169,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="---"
-            android:textSize="20dp" />
+            android:text="---" />
 
         <TextView
             android:id="@+id/turnAmountLabel"
@@ -182,8 +177,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="---"
-            android:textSize="20dp" />
+            android:text="---"/>
     </LinearLayout>
 
     <Button

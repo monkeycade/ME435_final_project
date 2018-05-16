@@ -84,6 +84,7 @@ public class ConeFinderActivity extends MainCommandBin implements CameraBridgeVi
      * Minimum size needed to consider the target a cone. (change as needed)
      */
     public double min_size_percentage = 0.001;
+    public double max_size_percentage = 0.01;
 
     /**
      * Screen size variables.
@@ -125,7 +126,25 @@ public class ConeFinderActivity extends MainCommandBin implements CameraBridgeVi
 
         mRangeHSeekBar.setMax(255);
         mRangeSSeekBar.setMax(255);
-        mSizeSeekBar.setMax(300);
+        mSizeSeekBar.setMax(3000);
+
+        int temp;
+        temp = mStorage.readint("ConeTargetH");
+        mConeTargetH = temp == 0 ? mConeRangeH : temp;
+        temp = mStorage.readint("ConeTargetS");
+        mConeTargetS = temp == 0 ? mConeTargetS : temp;
+        temp = mStorage.readint("ConeTargetV");
+        mConeTargetV = temp == 0 ? mConeTargetV : temp;
+        temp = mStorage.readint("ConeRangeH");
+        mConeRangeH = temp == 0 ? mConeRangeH : temp;
+        temp = mStorage.readint("ConeRangeS");
+        mConeRangeS = temp == 0 ? mConeRangeS : temp;
+        temp = mStorage.readint("ConeRangeV");
+        mConeRangeV = temp == 0 ? mConeRangeV : temp;
+        double temp2 = mStorage.readfloat("ConeSize2");
+        min_size_percentage = temp2 == 0 ? min_size_percentage : temp2;
+        temp2 = mStorage.readfloat("ConeSizemax");
+        max_size_percentage = temp2 == 0 ? max_size_percentage : temp2;
 
         updateUiWidgetsFromParameters();
 
@@ -144,7 +163,7 @@ public class ConeFinderActivity extends MainCommandBin implements CameraBridgeVi
         mTargetHEditText.setOnEditorActionListener(editorActionListener);
         mTargetSEditText.setOnEditorActionListener(editorActionListener);
         mTargetVEditText.setOnEditorActionListener(editorActionListener);
-
+        mSizeEditText.setOnEditorActionListener(editorActionListener);
         SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -172,18 +191,20 @@ public class ConeFinderActivity extends MainCommandBin implements CameraBridgeVi
         String targetHText = mTargetHEditText.getText().toString();
         String targetSText = mTargetSEditText.getText().toString();
         String targetVText = mTargetVEditText.getText().toString();
-        int size;
+        String sizeText = mSizeEditText.getText().toString();
         try {
             int h = Integer.parseInt(targetHText);
             int s = Integer.parseInt(targetSText);
             int v = Integer.parseInt(targetVText);
-            if (h < 0 || h > 255 || s < 0 || s > 255 || v < 0 || v > 255) {
+            int size = Integer.parseInt(sizeText);
+            if (h < 0 || h > 255 || s < 0 || s > 255 || v < 0 || v > 255||size < 0 ||size > 100) {
                 system_print("Invalid EditText box value!  Must be 0 to 255!");
                 return;
             }
             mConeTargetH = h;
             mConeTargetS = s;
             mConeTargetV = v;
+            max_size_percentage = size / 100.0;
         } catch (NumberFormatException e) {
             system_print("Invalid EditText box!  Must be an int value!");
             return;
@@ -199,7 +220,7 @@ public class ConeFinderActivity extends MainCommandBin implements CameraBridgeVi
         mRangeHTextView.setText("" + mConeRangeH);
         mRangeSTextView.setText("" + mConeRangeS);
         mRangeVTextView.setText("" + mConeRangeV);
-        mSizeTextView.setText("" + Math.round(min_size_percentage * 1000) / 10);
+        mSizeTextView.setText("" + Math.round(min_size_percentage * 1000) / 10.0);
     }
 
     protected void applyHsvTargetHsvRangeValues() {
@@ -217,6 +238,14 @@ public class ConeFinderActivity extends MainCommandBin implements CameraBridgeVi
             colorRangeHsv.val[1] = mConeRangeS;
             colorRangeHsv.val[2] = mConeRangeV;
             mDetector.setColorRadius(colorRangeHsv);
+            mStorage.store("ConeTargetH", mConeTargetH);
+            mStorage.store("ConeTargetS", mConeTargetS);
+            mStorage.store("ConeTargetV", mConeTargetV);
+            mStorage.store("ConeRangeH", mConeRangeH);
+            mStorage.store("ConeRangeS", mConeRangeS);
+            mStorage.store("ConeRangeV", mConeRangeV);
+            mStorage.store("ConeSize2",(float) min_size_percentage);
+            mStorage.store("ConeSizemax",(float) max_size_percentage);
         }
     }
 
@@ -230,7 +259,9 @@ public class ConeFinderActivity extends MainCommandBin implements CameraBridgeVi
         mRangeHTextView.setText("" + mConeRangeH);
         mRangeSTextView.setText("" + mConeRangeS);
         mRangeVTextView.setText("" + mConeRangeV);
-        mSizeTextView.setText("" + Math.round(min_size_percentage * 1000) / 10);
+        mSizeTextView.setText("" + Math.round(min_size_percentage * 1000) / 10.0);
+        mSizeSeekBar.setProgress( Math.round((float) min_size_percentage * 1000));
+        mSizeEditText.setText("" + Math.round((float) max_size_percentage * 100));
     }
 
 

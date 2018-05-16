@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
@@ -91,17 +90,15 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
     private double mLeftRightCone = 0;
     private double mConeSize;
     private boolean mConeFound = false;
-    private int mSeekRange = 40;
+    private int mSeekRangebig = 100;
+    private int mSeekRangesmall = 20;
 
     private int mLeftDutyCycle, mRightDutyCycle;
 
     private double mHeadingError = 0;
     private double mLastHeadingError = 0;
-    private double mSumHeadingError = 0;
-
-    private double mImageStopThresh = 0.07;
-
-
+    private double mSumHeadingErrorsum = 0;
+    private int mSumHeadingErrorcount = 0;
 
 
     protected void upDateTeamGoals() {
@@ -133,7 +130,7 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
         super.onCreate(savedInstanceState);
 
         mFieldOrientation = new FieldOrientation(this);
-        mFieldGps = new FieldGps(this,mStorage);
+        mFieldGps = new FieldGps(this, mStorage);
 
         setState(State.READY_FOR_MISSION);
         setSubState(SubState.INACTIVE);
@@ -155,16 +152,19 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
         mTeamToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
+                    system_print("set we are blue");
                     mIsRedTeam = false;
                     upDateTeamGoals();
                     mTeamToggle.setBackgroundColor(Color.BLUE);
                 } else {
+                    system_print("set we are red");
                     mIsRedTeam = true;
                     upDateTeamGoals();
                     mTeamToggle.setBackgroundColor(Color.RED);
                 }
             }
         });
+        mTeamToggle.setChecked(true);
         mTeamToggle.setChecked(false);
         mCurrentGpsHeading = 0;
         mCurrentGpsX = 0;
@@ -187,9 +187,6 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
         mFieldGps.removeUpdates();
         //GPS stuff is handled at Robot Activity
     }
-
-
-
 
 
     @Override
@@ -217,7 +214,7 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
         }
         gpsInfo += "   " + mGpsCounter;
         mGPSTextView.setText(gpsInfo);
-        if (distToTarget() < mSeekRange) {
+        if (distToTarget() < mSeekRangesmall) {
             mInSeekRange = true;
         } else {
             mInSeekRange = false;
@@ -266,21 +263,17 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
                 switch (mSubState) {
                     case GPS_SEEKING:
                         seekTargetAt(mNearX, mNearY);
-                        if (NavUtils.targetIsOnLeft(mCurrentGpsX, mCurrentGpsY, mCurrentGpsHeading, mXTarget, mYTarget)) {
-                            mTurnAmountTextView.setText("Left " + getString(R.string.degrees_format, mLeftTurnAmount));
-                        } else {
-                            mTurnAmountTextView.setText("Right " + getString(R.string.degrees_format, mRightTurnAmount));
-                        }
                         mTargetHeadingTextView.setText("" + getString(R.string.degrees_format, mTargetHeading));
-                        if (distToTarget() < mSeekRange && mConeFound) {
+                        if (distToTarget() < mSeekRangebig && mConeFound) {
                             setSubState(SubState.IMAGE_REC_SEEKING);
+                        } else if (distToTarget() < mSeekRangesmall) {
+                            setSubState(SubState.ACTION_SCRIPT);
                         }
                         break;
                     case IMAGE_REC_SEEKING:
-                        seekImage();
-                        //TODO fix it
-                        if (mWithinRange) {
-                            mWithinRange = false;
+                        if (distToTarget() > mSeekRangebig) {
+                            setSubState(SubState.GPS_SEEKING);
+                        } else if (distToTarget() < mSeekRangesmall && seekImage()) {
                             setSubState(SubState.ACTION_SCRIPT);
                         }
                     default:
@@ -292,22 +285,17 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
                 switch (mSubState) {
                     case GPS_SEEKING:
                         seekTargetAt(mFarX, mFarY);
-                        if (NavUtils.targetIsOnLeft(mCurrentGpsX, mCurrentGpsY, mCurrentGpsHeading, mXTarget, mYTarget)) {
-                            mTurnAmountTextView.setText("Left " + getString(R.string.degrees_format, mLeftTurnAmount));
-                        } else {
-                            mTurnAmountTextView.setText("Right " + getString(R.string.degrees_format, mLeftTurnAmount));
-                        }
                         mTargetHeadingTextView.setText("" + getString(R.string.degrees_format, mTargetHeading));
-                        if (mConeFound && mWithinRange) {
-                            if (mConeSize > min_size_percentage) {
-                                setSubState(SubState.IMAGE_REC_SEEKING);
-                            }
+                        if (distToTarget() < mSeekRangebig && mConeFound) {
+                            setSubState(SubState.IMAGE_REC_SEEKING);
+                        } else if (distToTarget() < mSeekRangesmall - 10) {
+                            setSubState(SubState.ACTION_SCRIPT);
                         }
                         break;
                     case IMAGE_REC_SEEKING:
-                        seekImage();
-                        if (mWithinRange) {
-                            mWithinRange = false;
+                        if (distToTarget() > mSeekRangebig) {
+                            setSubState(SubState.GPS_SEEKING);
+                        } else if (distToTarget() < mSeekRangesmall && seekImage()) {
                             setSubState(SubState.ACTION_SCRIPT);
                         }
                         break;
@@ -320,18 +308,18 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
                 switch (mSubState) {
                     case GPS_SEEKING:
                         seekTargetAt(0, 0);
-                        if (NavUtils.targetIsOnLeft(mCurrentGpsX, mCurrentGpsY, mCurrentGpsHeading, mXTarget, mYTarget)) {
-                            mTurnAmountTextView.setText("Left " + getString(R.string.degrees_format, mLeftTurnAmount));
-                        } else {
-                            mTurnAmountTextView.setText("Right " + getString(R.string.degrees_format, mLeftTurnAmount));
-                        }
                         mTargetHeadingTextView.setText("" + getString(R.string.degrees_format, mTargetHeading));
-                        if (mConeFound && mWithinRange) {
-                            if (mConeSize > min_size_percentage) {
-                                setSubState(SubState.IMAGE_REC_SEEKING);
-                            }
+                        if (distToTarget() < mSeekRangebig && mConeFound) {
+                            setSubState(SubState.IMAGE_REC_SEEKING);
+                        } else if (distToTarget() < mSeekRangesmall) {
+                            setSubState(SubState.ACTION_SCRIPT);
                         }
-                        if (getSubStateTimeMS() > 15000) {
+                        break;
+
+                    case IMAGE_REC_SEEKING:
+                        if (distToTarget() > mSeekRangebig) {
+                            setSubState(SubState.GPS_SEEKING);
+                        } else if (distToTarget() < mSeekRangesmall && seekImage()) {
                             setSubState(SubState.ACTION_SCRIPT);
                         }
                         break;
@@ -352,22 +340,26 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
                 switch (mSubState) {
                     case GPS_SEEKING:
                         seekTargetAt(0, 0);
-                        if (NavUtils.targetIsOnLeft(mCurrentGpsX, mCurrentGpsY, mCurrentGpsHeading, mXTarget, mYTarget)) {
-                            mTurnAmountTextView.setText("Left " + getString(R.string.degrees_format, mLeftTurnAmount));
-                        } else {
-                            mTurnAmountTextView.setText("Right " + getString(R.string.degrees_format, mLeftTurnAmount));
-                        }
                         mTargetHeadingTextView.setText("" + getString(R.string.degrees_format, mTargetHeading));
-                        if (getSubStateTimeMS() > 5000) {
+                        if (distToTarget() < mSeekRangebig && mConeFound) {
+                            setSubState(SubState.IMAGE_REC_SEEKING);
+                        } else if (distToTarget() < mSeekRangesmall) {
                             setState(State.WAITING_FOR_PICKUP);
                         }
                         break;
-                    case ACTION_SCRIPT:
-                        if (getSubStateTimeMS() > 1000) {
+
+                    case IMAGE_REC_SEEKING:
+                        if (distToTarget() > mSeekRangebig) {
+                            setSubState(SubState.GPS_SEEKING);
+                        } else if (distToTarget() < mSeekRangesmall && seekImage()) {
                             setState(State.WAITING_FOR_PICKUP);
                         }
+                        break;
                     default:
                         break;
+                }
+                if (getStateTimeMS() > 4000) {
+                    setState(State.WAITING_FOR_PICKUP);
                 }
             default:
                 break;
@@ -375,7 +367,7 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
     }
 
     public void checkColor(View view) {
-        identifyColor();
+        system_print("We are" + (mIsRedTeam ? "Red" : "Blue") + "Team");
         for (int i = 0; i < 3; i++) {
             if (containinCombo(getCombo(BallColorDetector.BALL_RED), ballcolors[i].getColor())) {
                 if (ballcolors[i].getColor() == BallColorDetector.BALL_GREEN) {
@@ -450,10 +442,25 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
                 break;
             case HOME_CONE_MISSION:
                 speak("Home Cone Mission");
-                setSubState(SubState.GPS_SEEKING);
+                boolean findwhite = false;
+                for (int i = 0; i < 3; i++) {
+                    if (containinCombo(getCombo(BallColorDetector.BALL_WHITE), ballcolors[i].getColor())) {
+                        if (ballcolors[i].getColor() == BallColorDetector.BALL_WHITE) {
+                            findwhite = true;
+                            mScript.runScript(i == 0 ? "right_ball_script" : (i == 1 ? "middle_ball_script" : "left_ball_script"));
+                            ballcolors[i].next();
+                        }
+                    }
+                }
+                if (findwhite) {
+                    setSubState(SubState.INACTIVE);
+                } else {
+                    setSubState(SubState.GPS_SEEKING);
+                }
                 break;
             case WAITING_FOR_PICKUP:
                 setSubState(SubState.INACTIVE);
+                sendWheelSpeed(0, 0);
                 break;
             case SEEKING_HOME:
                 setSubState(SubState.GPS_SEEKING);
@@ -468,16 +475,15 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
 
         switch (newSubState) {
             case GPS_SEEKING:
-                mSumHeadingError = 0;
+                mSumHeadingErrorsum = 0;
+                mSumHeadingErrorcount = 0;
                 mLastHeadingError = 0;
                 mHeadingError = 0;
                 break;
             case IMAGE_REC_SEEKING:
-                mSumHeadingError = 0;
-                mLastHeadingError = 0;
-                mHeadingError = 0;
                 break;
             case ACTION_SCRIPT:
+                sendWheelSpeed(0, 0);
                 if (mState == State.NEAR_BALL_MISSION) {
                     for (int i = 0; i < 3; i++) {
                         if (containinCombo(getCombo(mIsRedTeam ? BallColorDetector.BALL_RED : BallColorDetector.BALL_BLUE), ballcolors[i].getColor())) {
@@ -502,74 +508,31 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
     @Override
     public void onScricptsComplete() {
         super.onScricptsComplete();
-        if (mState == State.NEAR_BALL_MISSION) {
-            setState(State.FAR_BALL_MISSION);
-        }
         if (mState == State.FAR_BALL_MISSION) {
-            boolean findwhite = false;
-            for (int i = 0; i < 3; i++) {
-                if (containinCombo(getCombo(BallColorDetector.BALL_WHITE), ballcolors[i].getColor())) {
-                    if (ballcolors[i].getColor() == BallColorDetector.BALL_WHITE) {
-                        findwhite = true;
-                        mScript.runScript(i == 0 ? "right_ball_script" : (i == 1 ? "middle_ball_script" : "left_ball_script"));
-                        ballcolors[i].next();
-                    }
-                }
-            }
-            if (!findwhite) {
-                setState(State.HOME_CONE_MISSION);
-            }
+            setState(State.HOME_CONE_MISSION);
+        } else if (mState == State.NEAR_BALL_MISSION) {
+            setState(State.FAR_BALL_MISSION);
+        } else if (mState == State.HOME_CONE_MISSION) {
+            setSubState(SubState.GPS_SEEKING);
         }
+
     }
 
-    private boolean seeSomething() {
-        // TODO implement this
-        return false;
-    }
 
-    private boolean closeEnough() {
-        return false;
-    }
-
-    private void seekImage() {
+    private boolean seekImage() {
         if (mConeFound) {
-            double Target = mLeftRightCone;
-            int slowDown = 40;
-            mLeftDutyCycle = LEFT_PWM_VALUE_FOR_STRAIGHT - slowDown;
-            mRightDutyCycle = RIGHT_PWM_VALUE_FOR_STRAIGHT - slowDown;
-            double p_gain = 10;
-            double d_gain = 2;
-            double i_gain = 1;
-            if (mConeSize >= mImageStopThresh) {
+            double Target = 20 * mLeftRightCone * (max_size_percentage - mConeSize);
+
+            if (mConeSize >= max_size_percentage) {
                 mWithinRange = true;
-                setSubState(SubState.ACTION_SCRIPT);
+
                 sendCommand("WHEEL SPEED BRAKE 0 BRAKE 0");
+                return true;
             }
-            if (Target < 0) {
-                mLastHeadingError = mHeadingError;
-                mHeadingError = Math.abs(Target);
-                mSumHeadingError += mHeadingError;
-                mLeftTurnAmount = p_gain * mHeadingError + d_gain * (mHeadingError - mLastHeadingError) + (i_gain * mSumHeadingError / getSubStateTimeMS());
-                mLeftDutyCycle = LEFT_PWM_VALUE_FOR_STRAIGHT - slowDown - (int) mLeftTurnAmount; // Using a VERY simple plan. :)
-                if (mLeftDutyCycle > LEFT_PWM_VALUE_FOR_STRAIGHT) {
-                    mLeftDutyCycle = LEFT_PWM_VALUE_FOR_STRAIGHT - slowDown;
-                }
-                mLeftDutyCycle = Math.max(mLeftDutyCycle, LOWEST_DESIRABLE_DUTY_CYCLE);
-            } else {
-                mLastHeadingError = mHeadingError;
-                mHeadingError = Math.abs(Target);
-                mSumHeadingError += mHeadingError;
-
-                mRightTurnAmount = p_gain * mHeadingError + d_gain * (mHeadingError - mLastHeadingError) + (i_gain * mSumHeadingError / getSubStateTimeMS());
-                mRightDutyCycle = RIGHT_PWM_VALUE_FOR_STRAIGHT - slowDown - (int) mRightTurnAmount; // Could also scale it.
-                if (mRightDutyCycle > RIGHT_PWM_VALUE_FOR_STRAIGHT) {
-                    mRightDutyCycle = RIGHT_PWM_VALUE_FOR_STRAIGHT - slowDown;
-                }
-
-                mRightDutyCycle = Math.max(mRightDutyCycle, LOWEST_DESIRABLE_DUTY_CYCLE);
-            }
-
-            sendCommand("WHEEL SPEED FORWARD " + mRightDutyCycle + " FORWARD " + mLeftDutyCycle);
+            pid_Controler(Target, LEFT_PWM_VALUE_FOR_STRAIGHT - 100);
+            return false;
+        } else {
+            return distToTarget() < mSeekRangesmall;
         }
     }
 
@@ -579,7 +542,6 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
         mTargetHeading = NavUtils.getTargetHeading(mCurrentGpsX, mCurrentGpsY, xTarget, yTarget);
         mLeftTurnAmount = NavUtils.getLeftTurnHeadingDelta(mCurrentHeading, mTargetHeading);
         mRightTurnAmount = NavUtils.getRightTurnHeadingDelta(mCurrentHeading, mTargetHeading);
-
         mXTarget = xTarget;
         mYTarget = yTarget;
 
@@ -592,38 +554,39 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
             return;
         }*/
 
-        double p_gain = 1;
+        pid_Controler(mLeftTurnAmount > 180 ? mLeftTurnAmount - 360 : mLeftTurnAmount, LEFT_PWM_VALUE_FOR_STRAIGHT);
+    }
+
+
+    private void pid_Controler(double error, int max_speed) {
+
+        double p_gain = 3;
+        double i_gain = .0001;
         double d_gain = .1;
-        double i_gain = .05;
 
+        mLastHeadingError = mHeadingError;
+        mHeadingError = error;
+        mSumHeadingErrorsum += mHeadingError;
+        mSumHeadingErrorcount++;
 
-        if (NavUtils.targetIsOnLeft(mCurrentGpsX, mCurrentGpsY, mCurrentHeading, xTarget, yTarget)) {//if (mLeftTurnAmount < mRightTurnAmount) {
-            mLastHeadingError = mHeadingError;
-            mHeadingError = mLeftTurnAmount;
-            mSumHeadingError += mHeadingError;
+        mLeftTurnAmount = p_gain * mHeadingError + d_gain * (mHeadingError - mLastHeadingError) + (i_gain * mSumHeadingErrorsum / mSumHeadingErrorcount);
 
-            mLeftTurnAmount = p_gain * mHeadingError + d_gain * (mHeadingError - mLastHeadingError) + (i_gain * mSumHeadingError / getSubStateTimeMS());
-            mLeftDutyCycle = LEFT_PWM_VALUE_FOR_STRAIGHT - (int) mLeftTurnAmount; // Using a VERY simple plan. :)
-            if (mLeftDutyCycle > LEFT_PWM_VALUE_FOR_STRAIGHT) {
-                mLeftDutyCycle = LEFT_PWM_VALUE_FOR_STRAIGHT;
-            }
-            mLeftDutyCycle = Math.max(mLeftDutyCycle, LOWEST_DESIRABLE_DUTY_CYCLE);
+        int modifier = Math.abs(Math.round((float) mLeftTurnAmount));
+        int slow_speed = max_speed - modifier;
+        int fast_speed = max_speed + modifier;
+        slow_speed = slow_speed < 125 ? 125 : slow_speed;
+        fast_speed = (fast_speed > LEFT_PWM_VALUE_FOR_STRAIGHT) ? LEFT_PWM_VALUE_FOR_STRAIGHT : fast_speed;
+        if (mLeftTurnAmount < 0) {
+            mLeftDutyCycle = fast_speed;
+            mRightDutyCycle = slow_speed;
+            mTurnAmountTextView.setText("error: " + error + "\nRIGHT:" + modifier);
         } else {
-            mLastHeadingError = mHeadingError;
-            mHeadingError = mRightTurnAmount;
-            mSumHeadingError += mHeadingError;
+            mLeftDutyCycle = slow_speed;
+            mRightDutyCycle = fast_speed;
+            mTurnAmountTextView.setText("error: " + error + "\nLEFT:" + modifier);
 
-            mRightTurnAmount = p_gain * mHeadingError + d_gain * (mHeadingError - mLastHeadingError) + (i_gain * mSumHeadingError / getSubStateTimeMS());
-            mRightDutyCycle = RIGHT_PWM_VALUE_FOR_STRAIGHT - (int) mRightTurnAmount; // Could also scale it.
-            if (mRightDutyCycle > RIGHT_PWM_VALUE_FOR_STRAIGHT) {
-                mRightDutyCycle = RIGHT_PWM_VALUE_FOR_STRAIGHT;
-            }
-
-            mRightDutyCycle = Math.max(mRightDutyCycle, LOWEST_DESIRABLE_DUTY_CYCLE);
         }
-        //LOOP_INTERVAL_MS
-
-        sendCommand("WHEEL SPEED FORWARD " + mRightDutyCycle + " FORWARD " + mLeftDutyCycle);
+        sendWheelSpeed(mRightDutyCycle, mLeftDutyCycle);
     }
 
     public double distToTarget() {
@@ -646,7 +609,9 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
         mConeFound = false;
         mHeadingError = 0;
         mLastHeadingError = 0;
-        mSumHeadingError = 0;
+        mSumHeadingErrorsum = 0;
+        mSumHeadingErrorcount = 0;
+        mCommandHandler.removeCallbacksAndMessages(null);
         sendCommand("WHEEL SPEED BRAKE 0 BRAKE 0");
         mTeamToggle.setChecked(false);
     }
@@ -696,7 +661,7 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
     @Override
     public void onImageRecComplete(boolean coneFound, double leftRightLocation,
                                    double topBottomLocation, double sizePercentage) {
-        super.onImageRecComplete(coneFound,leftRightLocation,topBottomLocation,sizePercentage);
+        super.onImageRecComplete(coneFound, leftRightLocation, topBottomLocation, sizePercentage);
         mConeFound = coneFound;
         if (coneFound) {
             mLeftRightCone = leftRightLocation;
@@ -704,18 +669,16 @@ public class StateMachineCompetition extends BallColorTrainner implements FieldG
 //            mLeftRightLocationTextView.setText(String.format("%.3f", leftRightLocation));
 //            mTopBottomLocationTextView.setText(String.format("%.3f", topBottomLocation));
 //            mSizePercentageTextView.setText(String.format("%.5f", sizePercentage));
-            findViewById(R.id.displayTextLayout).setBackgroundColor(Color.rgb(255,0,0));
+            findViewById(R.id.displayTextLayout).setBackgroundColor(Color.rgb(255, 0, 0));
         } else {
             mLeftRightCone = 0;
             mConeSize = 0;
-            findViewById(R.id.displayTextLayout).setBackgroundColor(Color.rgb(255,255,255));
+            findViewById(R.id.displayTextLayout).setBackgroundColor(Color.rgb(255, 255, 255));
 //            mLeftRightLocationTextView.setText("---");
 //            mTopBottomLocationTextView.setText("---");
 //            mSizePercentageTextView.setText("---");
         }
     }
-
-
 
 
 }
